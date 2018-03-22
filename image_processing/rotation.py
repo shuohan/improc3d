@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+from scipy.ndimage.interpolation import map_coordinates
+
 from .homogeneous_conversions import convert_rotation_to_homogeneous
 from .homogeneous_conversions import convert_translation_to_homogeneous
 from .homogeneous_conversions import convert_points_to_homogeneous
@@ -11,23 +14,23 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     
     Args:
         image (3D numpy.array): The image to rotate
-        x_angle (float): Rotation angle around x axis in rad
-        y_angle (float): Rotation angle around y axis in rad
-        z_angle (float): Rotation angle around z axis in rad
+        x_angle (float): Rotation angle around x axis in degree
+        y_angle (float): Rotation angle around y axis in degree
+        z_angle (float): Rotation angle around z axis in degree
         point ((3,) tuple): The rotation point; if None, use the image center
         order (int): The interpolation order
 
     """
-    if not center:
-        center = image.shape / 2
+    if not point:
+        point = np.array(image.shape) / 2
     
-    rotation_x = _calc_rotation_x(x_angle)
-    rotation_y = _calc_rotation_y(y_angle)
-    rotation_z = _calc_rotation_z(z_angle)
+    rotation_x = _calc_rotation_x(x_angle / 180 * np.pi)
+    rotation_y = _calc_rotation_y(y_angle / 180 * np.pi)
+    rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rotation = rotation_z @ rotation_y @ rotation_x
 
     inverse_rotation = np.linalg.inv(rotation)
-    inverse_transform = _calc_rotation_around_point(inv_rotation, point)
+    inverse_transform = _calc_rotation_around_point(inverse_rotation, point)
 
     target_coords = calc_image_coords(image.shape)
     target_coords = convert_points_to_homogeneous(target_coords)
@@ -36,12 +39,12 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     source_coords = convert_points_from_homogeneous(source_coords)
 
     interpolation = map_coordinates(image, source_coords, order=order)
-    rotated_image = np.reshape(interpolation, shape)
+    rotated_image = np.reshape(interpolation, image.shape)
 
     return rotated_image 
 
 
-def _calc_rotation_around_point(self, rotation, point):
+def _calc_rotation_around_point(rotation, point):
     """Calculate the rotation around a point
 
     It first translates the image so the `point` is at the origin, then
