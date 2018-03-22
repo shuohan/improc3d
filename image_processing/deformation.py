@@ -31,7 +31,7 @@ def deform(image, x_deformation, y_deformation, z_deformation, order=1):
     return deformed_image
 
 
-def calc_random_defromation(image_shape, sigma, scale):
+def calc_random_deformation(image_shape, sigma, scale):
     """Calculate a component of a random deformation field
 
     This deformation is along one axis. Call this function three times from
