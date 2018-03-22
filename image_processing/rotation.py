@@ -122,5 +122,10 @@ def calc_image_coords(shape):
 
     """
     grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
+    coords = convert_grid_to_coords(grid)
+    return coords
+
+
+def convert_grid_to_coords(grid):
     coords = np.vstack([g.flatten()[None, ...] for g in grid]) 
     return coords
