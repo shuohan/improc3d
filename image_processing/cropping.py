@@ -28,6 +28,8 @@ def crop3d(image, bbox):
     Returns:
         cropped (3D numpy.array): The cropped image. If `image` is 4D, `cropped`
             is also 4D and channel first.
+        source_bbox ((3,) list of slice): The bbox in the source image
+        target_bbox ((3,) list of slice): The bbox in the target image
 
     """
     num_dims = len(bbox)
@@ -41,7 +43,7 @@ def crop3d(image, bbox):
         target_bbox = [...] + target_bbox
     cropped = np.zeros(target_shape, dtype=image.dtype)
     cropped[target_bbox] = image[source_bbox]
-    return cropped
+    return cropped, source_bbox, target_bbox
 
 
 def _calc_source_bounding_box(bbox, source_shape):
