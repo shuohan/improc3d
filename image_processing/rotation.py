@@ -3,6 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
+from .utils import convert_grid_to_coords
 from .homogeneous_conversions import convert_rotation_to_homogeneous
 from .homogeneous_conversions import convert_translation_to_homogeneous
 from .homogeneous_conversions import convert_points_to_homogeneous
@@ -126,9 +127,4 @@ def calc_image_coords(shape):
     """
     grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
     coords = convert_grid_to_coords(grid)
-    return coords
-
-
-def convert_grid_to_coords(grid):
-    coords = np.vstack([g.flatten()[None, ...] for g in grid]) 
     return coords
