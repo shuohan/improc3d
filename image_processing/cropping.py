@@ -104,36 +104,47 @@ def _calc_target_bounding_box(bbox, source_shape, target_shape):
     return target_bbox
 
 
-def calc_bbox3d(mask, bbox_shape, allow_smaller=False):
+def calc_bbox3d(mask):
     """Calculate bounding box surrounding the mask
 
-    If the `bbox_shape` is larger than the mask, the left-most and right-most of
-    the mask is padded by the same amount of space. If the `bbox_shape` is
-    smaller than the mask, the left-most and right-most of the mask is cropped
-    by the same amount.
+    Calcualte the bounding boxes of connected components in the mask and unite
+    them all.
 
     Args:
         mask (3D numpy.array): The mask to calculate bbox from
-        bbox_shape ((3,) tuple of int): The shape of the calculated bbox
-        allow_smaller (bool): Allow `bbox_shape` is smaller than `mask`
 
     Returns:
-        resized_bbox (1x3 list of slice): Calculated bounding box
-
-    Raises:
-        RuntimeError: `bbox_shape` is smaller than the mask
+        bbox (1x3 list of slice): Calculated bounding box
 
     """
     bboxes = find_objects(mask.astype(bool))
-
-    # union all bboxes from the objects in `mask`
     starts = [[s.start for s in bbox] for bbox in bboxes]
     stops = [[s.stop for s in bbox] for bbox in bboxes]
     starts = np.min(starts, axis=0)
     stops = np.min(stops, axis=0)
     bbox = [slice(start, stop, None) for start, stop in zip(starts, stops)]
+    return bbox
 
-    # resize the bbox
+
+def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
+    """Resize bbox to have bbox_shape
+
+    If the `bbox_shape` is larger than `bbox`, the left and right of `bbox` is
+    padded by the same amount of space. If the `bbox_shape` is smaller than
+    `bbox`, the left and right of `bbox` is cropped by the same amount.
+
+    Args:
+        bbox ((3,) tuple of slice): The bbox to resize
+        bbox_shape ((3,) tuple of int): The shape of the resized bbox
+        allow_smaller (bool): Allow `bbox_shape` is smaller than `bbox`
+
+    Returns:
+        resized_bbox (1x3 list of slice): Resized bounding box
+
+    Raises:
+        RuntimeError: `bbox_shape` is smaller than the mask
+    
+    """
     resized_bbox = list()
     for source_bound, target_size in zip(bbox, bbox_shape):
         source_size = source_bound.stop - source_bound.start
@@ -147,7 +158,6 @@ def calc_bbox3d(mask, bbox_shape, allow_smaller=False):
             target_bound = slice(source_bound.start - left_padding,
                                  source_bound.stop + right_padding)
         resized_bbox.append(target_bound)
-
     return resized_bbox
 
 
