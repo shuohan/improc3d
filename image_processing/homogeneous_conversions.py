@@ -51,7 +51,7 @@ def convert_points_to_homogeneous(points):
     return points
 
 
-def convert_points_from_homogeneous(points)
+def convert_points_from_homogeneous(points):
     """Convert 3D points from homogeneous coordinate
 
     Args:
