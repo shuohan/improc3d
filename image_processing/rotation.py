@@ -21,7 +21,7 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
         order (int): The interpolation order
 
     """
-    if not point:
+    if point is None:
         point = np.array(image.shape) / 2
     
     rotation_x = _calc_rotation_x(x_angle / 180 * np.pi)

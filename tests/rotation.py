@@ -21,12 +21,13 @@ parser.add_argument('-y', '--y-angle', default=5, required=False, type=float,
                     help='The rotation angle around y axis in degree')
 parser.add_argument('-z', '--z-angle', default=5, required=False, type=float,
                     help='The rotation angle around z axis in degree')
-parser.add_argument('-p', '--point', default=None, required=False, type=float,
-                    help='The 3D image to rotate')
+parser.add_argument('-p', '--point', default=None, required=False, nargs=3,
+                    type=float, help='The 3D image to rotate')
 args = parser.parse_args()
 
 image = nib.load(args.image).get_data()
-rotated = rotate3d(image, args.x_angle, args.y_angle, args.z_angle, args.point)
+point = np.array(args.point)
+rotated = rotate3d(image, args.x_angle, args.y_angle, args.z_angle, point)
 shape = image.shape
 slice_indices = np.array(shape) // 2
 plt.figure()
