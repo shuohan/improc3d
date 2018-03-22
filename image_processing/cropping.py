@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import numpy as pn
+import numpy as np
 from scipy.ndimage.measurements import find_objects
 
 
@@ -44,7 +44,7 @@ def crop3d(image, bbox):
     return cropped
 
 
-def _calc_source_bounding(bbox, source_shape):
+def _calc_source_bounding_box(bbox, source_shape):
     """Calculate the bounding of the source image to crop
 
     The data of the image within this source bounding is extracted for
@@ -71,7 +71,7 @@ def _calc_source_bounding(bbox, source_shape):
     return source_bbox
 
 
-def _calc_target_bounding(bbox, source_shape, target_shape):
+def _calc_target_bounding_box(bbox, source_shape, target_shape):
     """Calculate the bounding of the cropped target image
 
     `bbox` is relative to the shape of the source image. For the target
@@ -122,11 +122,11 @@ def calc_bbox3d(mask, bbox_shape, allow_smaller=False):
         RuntimeError: `bbox_shape` is smaller than the mask
 
     """
-    bboxes = find_objects(mask)
+    bboxes = find_objects(mask.astype(bool))
 
     # union all bboxes from the objects in `mask`
-    starts = [[s.start for s in bbox] for bbox in bboxes]]
-    stops = [[s.stop for s in bbox] for bbox in bboxes]]
+    starts = [[s.start for s in bbox] for bbox in bboxes]
+    stops = [[s.stop for s in bbox] for bbox in bboxes]
     starts = np.min(starts, axis=0)
     stops = np.min(stops, axis=0)
     bbox = [slice(start, stop, None) for start, stop in zip(starts, stops)]
