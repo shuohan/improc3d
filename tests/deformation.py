@@ -10,7 +10,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing.deformation import deform, calc_random_deformation
+from image_processing.deformation import deform3d, calc_random_deformation3d
 
 
 parser = argparse.ArgumentParser(description='Test random free deformation')
@@ -23,10 +23,10 @@ args = parser.parse_args()
 
 image = nib.load(args.image).get_data()
 
-x_deformation = calc_random_defromation(image.shape, args.sigma, args.limit)
-y_deformation = calc_random_defromation(image.shape, args.sigma, args.limit)
-z_deformation = calc_random_defromation(image.shape, args.sigma, args.limit)
-deformed = deform(image, x_deformation, y_deformation, z_deformation)
+x_deformation = calc_random_deformation3d(image.shape, args.sigma, args.limit)
+y_deformation = calc_random_deformation3d(image.shape, args.sigma, args.limit)
+z_deformation = calc_random_deformation3d(image.shape, args.sigma, args.limit)
+deformed = deform3d(image, x_deformation, y_deformation, z_deformation)
 
 shape = image.shape
 slice_indices = np.array(shape) // 2
