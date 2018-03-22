@@ -10,7 +10,8 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing.cropping import crop3d, calc_bbox3d, uncrop3d
+from image_processing.cropping import crop3d, calc_bbox3d, resize_bbox3d
+from image_processing.cropping import uncrop3d
 
 
 parser = argparse.ArgumentParser(description='Test cropping')
@@ -23,8 +24,9 @@ args = parser.parse_args()
 
 image = nib.load(args.image).get_data()
 mask = nib.load(args.mask).get_data()
-bbox = calc_bbox3d(mask, args.bbox_shape, args.allow_smaller)
-cropped, source_bbox, target_bbox = crop3d(image, bbox)
+bbox = calc_bbox3d(mask)
+resized_bbox = resize_bbox3d(bbox, args.bbox_shape, args.allow_smaller)
+cropped, source_bbox, target_bbox = crop3d(image, resized_bbox)
 uncropped = uncrop3d(cropped, image.shape, source_bbox, target_bbox)
 
 plt.figure()
