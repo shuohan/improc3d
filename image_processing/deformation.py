@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+from scipy.ndimage.interpolation import map_coordinates
+
+from .utils import convert_grid_to_coords
 
 
-def deform(image, x_deformation, y_deformation, z_deformation, order=order):
+def deform(image, x_deformation, y_deformation, z_deformation, order=1):
     shape = image.shape
     target_grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
     deformation = [x_deformation, y_deformation, z_deformation]
@@ -14,12 +18,10 @@ def deform(image, x_deformation, y_deformation, z_deformation, order=order):
     return deformed_image
 
 
-def calc_random_defromation(image_shape, sigma, scale_limit):
+def calc_random_defromation(image_shape, sigma, scale):
     random_state = np.random.RandomState(None)
-    max_scale = random_state.rand(1) * scale_limit
-    min_scale = -random_state.rand(1) * scale_limit
-    result = random_state.rand(*image_shape)
+    result = random_state.rand(*image_shape) * 2 - 1
     result = gaussian_filter(result, sigma)
-    result = smoothed_deformation / np.max(result)
-    result = scaled_deformation * (max_scale - min_scale) - min_scale
+    result = result / np.max(result) * scale
+    print(np.min(result), np.max(result))
     return result
