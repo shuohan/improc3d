@@ -23,7 +23,7 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
 
     """
     if point is None:
-        point = np.array(image.shape) / 2
+        point = np.array(image.shape[-3:]) / 2
     
     rotation_x = _calc_rotation_x(x_angle / 180 * np.pi)
     rotation_y = _calc_rotation_y(y_angle / 180 * np.pi)
@@ -33,13 +33,18 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     inverse_rotation = np.linalg.inv(rotation)
     inverse_transform = _calc_rotation_around_point(inverse_rotation, point)
 
-    target_coords = calc_image_coords(image.shape)
+    target_coords = calc_image_coords(image.shape[-3:])
     target_coords = convert_points_to_homogeneous(target_coords)
 
     source_coords = inverse_transform @ target_coords
     source_coords = convert_points_from_homogeneous(source_coords)
 
-    interpolation = map_coordinates(image, source_coords, order=order)
+    if len(image.shape) == 4:
+        interpolation = [map_coordinates(im, source_coords, order=order)
+                         for im in image]
+        interpolation = np.vstack(interpolation)
+    else:
+        interpolation = map_coordinates(image, source_coords, order=order)
     rotated_image = np.reshape(interpolation, image.shape)
 
     return rotated_image 
