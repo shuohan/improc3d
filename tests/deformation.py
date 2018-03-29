@@ -10,7 +10,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing.deformation import deform3d, calc_random_deformation3d
+from image_processing_3d.deformation import deform3d, calc_random_deformation3d
 
 
 parser = argparse.ArgumentParser(description='Test random free deformation')

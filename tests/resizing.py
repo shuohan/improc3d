@@ -10,7 +10,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing.resizing import padcrop3d
+from image_processing_3d.resizing import padcrop3d
 
 
 parser = argparse.ArgumentParser(description='Test resize')

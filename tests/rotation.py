@@ -10,7 +10,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing.rotation import rotate3d
+from image_processing_3d.rotation import rotate3d
 
 
 parser = argparse.ArgumentParser(description='Test rotation')
