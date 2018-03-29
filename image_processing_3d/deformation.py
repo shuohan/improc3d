@@ -21,13 +21,18 @@ def deform3d(image, x_deformation, y_deformation, z_deformation, order=1):
         deformed_image (3d numpy.array): The deformed image
 
     """
-    shape = image.shape
-    target_grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
+    target_grid = np.meshgrid(*[np.arange(s) for s in image.shape[-3:]],
+                              indexing='ij')
     deformation = [x_deformation, y_deformation, z_deformation]
     source_grid = [g - d for g, d in zip(target_grid, deformation)]
     source_coords = convert_grid_to_coords(source_grid)
-    interpolation = map_coordinates(image, source_coords, order=order)
-    deformed_image = np.reshape(interpolation, shape)
+    if len(image.shape) == 4:
+        interpolation = [map_coordinates(im, source_coords, order=order)
+                         for im in image]
+        interpolation = np.vstack(interpolation)
+    else:
+        interpolation = map_coordinates(image, source_coords, order=order)
+    deformed_image = np.reshape(interpolation, image.shape)
     return deformed_image
 
 

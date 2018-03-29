@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='image-processing-3d',
-      version='0.2.1',
+      version='0.3.0',
       description='Useful functions to process 3D images',
       author='Shuo Han',
       author_email='shan50@jhu.edu',

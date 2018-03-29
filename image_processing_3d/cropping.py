@@ -163,15 +163,16 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
 
 def uncrop3d(image, source_shape, source_bbox, target_bbox):
     """Reverse crop3d but pad zeros around the cropped region
-    
+
     Args:
-        image (3D numpy.array): The image to uncrop
-        source_shape ((3,) tuple): The shape of uncropped image
-        source_bbox ((3,) list of slice): The bbox used to crop the image
-        target_bbox ((3,) list of slice): The corresponding bbox in the cropped
+        image (3D/4D numpy.array): The image to uncrop; if 4D, channels first
+        source_shape ((3,) or (4,) tuple): The shape of uncropped image
+        source_bbox ((3,) or (4,) list of slice): The bbox used to crop the image
+        target_bbox ((3,) or (4,) list of slice): The corresponding bbox in the
+            cropped image
 
     Returns:
-        uncropped (3D numpy.array): Uncropped image
+        uncropped (3D/4D numpy.array): Uncropped image; if 4D, channels first
 
     """
     uncropped = np.zeros(source_shape, dtype=image.dtype)
