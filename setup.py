@@ -13,4 +13,5 @@ setup(name='image-processing-3d',
       description='Useful functions to process 3D images',
       author='Shuo Han',
       author_email='shan50@jhu.edu',
+      scripts=scripts,
       packages=['image_processing_3d'])
