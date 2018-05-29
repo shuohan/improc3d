@@ -7,8 +7,10 @@ import subprocess
 scripts = glob('scripts/*')
 command = ['git', 'describe', '--tags']
 tag = subprocess.check_output(command).decode().strip()
-head_hash = ['git', 'show-ref', '--head', 'HEAD']
-tag_hash = ['git', 'show-ref', '--tags', tag]
+command = ['git', 'show-ref', '--head', 'HEAD']
+head_hash = subprocess.check_output(command).decode().strip()
+command = ['git', 'show-ref', '--tags', tag]
+tag_hash = subprocess.check_output(command).decode().strip()
 version = tag if tag_hash == head_hash else head_hash
 
 setup(name='image-processing-3d',
