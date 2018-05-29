@@ -1,9 +1,15 @@
 # -*- coding: utf-8 -*-
 
 from distutils.core import setup
+from glob import glob
+import subprocess
+
+scripts = glob('scripts/*')
+command = ['git', 'describe', '--tags']
+version = subprocess.check_output(command).decode().strip()
 
 setup(name='image-processing-3d',
-      version='0.3.0',
+      version=version,
       description='Useful functions to process 3D images',
       author='Shuo Han',
       author_email='shan50@jhu.edu',
