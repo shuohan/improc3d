@@ -21,6 +21,10 @@ rotated = rotate3d(image, 10, 20, 30)
 rotated = rotate3d(image, 10, 20, 30, np.array([100, 80, 90]))
 ```
 
+### Rotate 3D image around a point
+
+See `tests/scaling.py` for more details.
+
 ### Deform 3D image using random elastic deformation
 
 See `tests/deformation.py` for more details.
@@ -28,3 +32,7 @@ See `tests/deformation.py` for more details.
 ### Crop 3D image using a mask or bounding box
 
 See `tests/cropping.py` for more details.
+
+## TODO
+
+1. Refactor rotation, scaling, and deformation for duplicated interpolation
