@@ -42,7 +42,7 @@ def crop3d(image, bbox):
         source_bbox = [...] + source_bbox
         target_bbox = [...] + target_bbox
     cropped = np.zeros(target_shape, dtype=image.dtype)
-    cropped[target_bbox] = image[source_bbox]
+    cropped[tuple(target_bbox)] = image[tuple(source_bbox)]
     return cropped, source_bbox, target_bbox
 
 
