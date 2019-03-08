@@ -111,13 +111,18 @@ def calc_bbox3d(mask):
     them all.
 
     Args:
-        mask (3D numpy.array): The mask to calculate bbox from
+        mask (3D/4D numpy.array): The mask to calculate bbox from; if 4D, the
+            first is assume to be channels and only the first channel is used to
+            calculate the bbox
 
     Returns:
         bbox (1x3 list of slice): Calculated bounding box
 
     """
-    bboxes = find_objects(mask.astype(bool))
+    mask = mask.astype(bool)
+    if len(mask.shape) == 4:
+        mask = mask[0, ...]
+    bboxes = find_objects(mask)
     starts = [[s.start for s in bbox] for bbox in bboxes]
     stops = [[s.stop for s in bbox] for bbox in bboxes]
     starts = np.min(starts, axis=0)
