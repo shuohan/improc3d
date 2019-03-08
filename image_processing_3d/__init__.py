@@ -4,3 +4,4 @@ from .resizing import padcrop3d
 from .rotation import rotate3d
 from .scaling import scale3d
 from .translation import translate3d_int
+from .sigmoid_intensity import calc_random_intensity_transform
