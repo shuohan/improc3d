@@ -3,7 +3,8 @@
 import numpy as np
 
 
-def calc_random_intensity_transform(klim=(5, 20), blim=(-1, 1), num_sigmoid=5):
+def calc_random_intensity_transform(klim=(10.0, 20.0), blim=(-1, 1),
+                                    num_sigmoid=5):
     """Calculate random intensity transform
 
     Uniformly sample k, b, alpha for mixture of sigmoid to calculate a intensity
@@ -50,7 +51,7 @@ def _sample_k(k_min, k_max, size):
     ks = np.random.rand(size) * (k_max / k_min - 1) + 1 # from [1, k_max/k_min]
     shrinking_indices  = np.random.choice((-1, 1), size=size) < 0
     ks[shrinking_indices] = 1 / ks[shrinking_indices] # shrinking or enlarging
-    ks = ks * k_max / k_min
+    ks = ks * k_min
     return ks
 
 
