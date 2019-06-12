@@ -70,7 +70,7 @@ def _calc_source_bounding_box(bbox, source_shape):
         source_start = max(bounding.start, 0)
         source_stop = min(bounding.stop, source_size)
         source_bbox.append(slice(source_start, source_stop, None))
-    return source_bbox
+    return tuple(source_bbox)
 
 
 def _calc_target_bounding_box(bbox, source_shape, target_shape):
@@ -101,7 +101,7 @@ def _calc_target_bounding_box(bbox, source_shape, target_shape):
         target_start = 0 - min(bounding.start, 0)
         target_stop = tsize - max(bounding.stop - ssize, 0)
         target_bbox.append(slice(target_start, target_stop, None))
-    return target_bbox
+    return tuple(target_bbox)
 
 
 def calc_bbox3d(mask):
@@ -128,7 +128,7 @@ def calc_bbox3d(mask):
     starts = np.min(starts, axis=0)
     stops = np.min(stops, axis=0)
     bbox = [slice(start, stop, None) for start, stop in zip(starts, stops)]
-    return bbox
+    return tuple(bbox)
 
 
 def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
@@ -163,7 +163,7 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
             target_bound = slice(source_bound.start - left_padding,
                                  source_bound.stop + right_padding)
         resized_bbox.append(target_bound)
-    return resized_bbox
+    return tuple(resized_bbox)
 
 
 def uncrop3d(image, source_shape, source_bbox, target_bbox):
@@ -181,5 +181,5 @@ def uncrop3d(image, source_shape, source_bbox, target_bbox):
 
     """
     uncropped = np.zeros(source_shape, dtype=image.dtype)
-    uncropped[source_bbox] = image[target_bbox]
+    uncropped[tuple(source_bbox)] = image[tuple(target_bbox)]
     return uncropped
