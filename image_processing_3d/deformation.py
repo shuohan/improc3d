@@ -8,17 +8,22 @@ from .utils import convert_grid_to_coords
 
 
 def deform3d(image, x_deformation, y_deformation, z_deformation, order=1):
-    """Transform an image using deformation field
+    """Transforms an image using a deformation field.
     
     Args:
-        image (3d numpy.array): The 3d image to deform
-        x_deformation (3d numpy.array): The deformation along x axis in pixel
-        y_deformation (3d numpy.array): The deformation along y axis in pixel
-        z_deformation (3d numpy.array): The deformation along z axis in pixel
-        order (int): The interpolation order
+        image (numpy.ndarray, 3D or 4D): The image to deform. Channel first if
+            it is 4D.
+        x_deformation (numpy.ndarray, 3D): The x deformation. Per-voxel
+            translation along the x axis.
+        y_deformation (numpy.ndarray, 3D): The y deformation. Per-voxel
+            translation along the y axis
+        z_deformation (numpy.ndarray, 3D): The z deformation. Per-voxel
+            translation along the z axis
+        order (int): The interpolation order. See
+            :func:`scipy.ndimage.interpolation.map_coordinates`
 
     Returns:
-        deformed_image (3d numpy.array): The deformed image
+        numpy.ndarray, 3D: The deformed image
 
     """
     target_grid = np.meshgrid(*[np.arange(s) for s in image.shape[-3:]],
@@ -37,21 +42,23 @@ def deform3d(image, x_deformation, y_deformation, z_deformation, order=1):
 
 
 def calc_random_deformation3d(image_shape, sigma, scale):
-    """Calculate a component of a random deformation field
+    """Calculates a component of a random deformation field
 
     This deformation is along one axis. Call this function three times from
-    deformation along x, y, and z
+    deformation along x, y, and z axes. Check the source code for details of the
+    computation.
 
     Args:
-        image_shape ((3,) tuple): The shape of the image
+        image_shape (tuple of int, 3D): The shape of the image
         sigma (float): The value controling the smoothness of the deformation
             field. Larger the value is, smoother the field.
         scale (float): The deformation is supposed to draw from a uniform
             distribution [-eps, +eps]. Use this value to specify the upper bound
-            of the sampling distribution.
+            of the sampling distribution. Larger the value is, stronger the
+            deformation.
 
     Returns:
-        result (3d numpy.array): The component of the deformation filed 
+        result (numpy.ndarray, 3D): The component of the deformation filed 
 
     """
     random_state = np.random.RandomState(None)
