@@ -1,24 +1,28 @@
-.. Image Processing 3D documentation master file, created by
-   sphinx-quickstart on Wed Jul  3 17:15:27 2019.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+Image Processing 3D
+===================
 
-Welcome to Image Processing 3D's documentation!
-===============================================
-
-.. .. toctree::
-..    :maxdepth: 2
-..    :caption: Contents:
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
-   image_processing_3d
+.. automodule:: image_processing_3d
 
+Resize
+------
+.. autofunction:: crop3d
+.. autofunction:: uncrop3d
+.. autofunction:: calc_bbox3d
+.. autofunction:: resize_bbox3d
+.. autofunction:: padcrop3d
 
+Transform
+---------
+.. autofunction:: deform3d
+.. autofunction:: rotate3d
+.. autofunction:: scale3d
+.. autofunction:: translate3d_int
+.. autofunction:: calc_random_deformation3d
+.. autofunction:: calc_random_intensity_transform
 
-Indices and tables
-==================
-
+Index
+=====
 * :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
