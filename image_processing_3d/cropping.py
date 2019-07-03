@@ -26,12 +26,15 @@ def crop3d(image, bbox):
         bbox (tuple of slice, 3D): The bounding box. The start and stop of
             each slice should not be ``None``.
 
-    Returns:
-        tuple:
-        - **cropped** (*numpy.ndarray, 3D*) -- The cropped image. If ``image`` is
-            4D, ``cropped`` is also 4D and channel first.
-        - **source_bbox** (*tuple of slice, 3D*): The bbox in the source image.
-        - **target_bbox** (*tuple of slice, 3D*): The bbox in the target image.
+    Returns
+    -------
+        cropped: numpy.ndarray, 3D
+            The cropped image. If ``image`` is 4D, ``cropped`` is also 4D and
+            channel first.
+        source_bbox: tuple of slice, 3D
+            The bounding box in the source image.
+        target_bbox: tuple of slice, 3D
+            The bounding box in the target image.
 
     """
     num_dims = len(bbox)
