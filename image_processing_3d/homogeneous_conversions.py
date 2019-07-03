@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-"""Homogeneous conversions
+"""Functions for homogeneous conversions.
 
 """
 
@@ -8,13 +8,13 @@ import numpy as np
 
 
 def convert_rotation_to_homogeneous(rotation):
-    """Convert the 3x3 rotation matrix to homogeneous coordinate
+    """Converts the 3x3 rotation matrix into the homogeneous coordinate.
 
     Args:
-        rotation (3x3 numpy.array): The rotation matrix to convert
+        rotation (numpy.ndarray): The 3D rotation matrix to convert.
     
     Returns:
-        result (4x4 numpy.array): Homogeneous rotation matrix
+        numpy.ndarray: Homogeneous rotation matrix.
 
     """
     result = np.eye(4)
@@ -23,13 +23,13 @@ def convert_rotation_to_homogeneous(rotation):
 
 
 def convert_translation_to_homogeneous(translation):
-    """Convert 3D translation to homogeneous coordinate
+    """Converts 3D translation into the homogeneous coordinate.
 
     Args:
-        translation ((3,) numpy.array or list): The translation to convert
+        translation (numpy.ndarray): The 3D translation to convert.
 
     Returns:
-        result (4x4 numpy.array): Translation in homogeneous coordinate
+        numpy.ndarray: Translation in the homogeneous coordinate.
 
     """
     result = np.eye(4)
@@ -38,13 +38,15 @@ def convert_translation_to_homogeneous(translation):
 
 
 def convert_points_to_homogeneous(points):
-    """Convert 3D points to homogeneous coordinate
+    """Converts 3D points into the homogeneous coordinate
 
     Args:
-        points (3 x num_points numpy.array): The points to convert
+        points (numpy.ndarray): The points to convert. It should be a 2D array
+            with shape 3 x num_points.
 
     Returns:
-        points (4 x num_points numpy.array): Points in homogeneous coordinate
+        numpy.ndarray: Points in the homogeneous coordinate. A 2D array with
+            shape 4 x num_points.
 
     """
     points = np.vstack([points, np.ones((1, points.shape[1]))])
@@ -52,13 +54,15 @@ def convert_points_to_homogeneous(points):
 
 
 def convert_points_from_homogeneous(points):
-    """Convert 3D points from homogeneous coordinate
+    """Converts 3D points from the homogeneous coordinate
 
     Args:
-        points (4 x num_points numpy.array): The points to convert
+        points (numpy.ndarray): The points to convert. It should a 2D array with
+            shape 4 x num_points.
 
     Returns:
-        points (3 x num_points numpy.array): Non-homogeneous points
+        numpy.ndarray: Non-homogeneous points. A 2D array with shape
+            3 x num_points.
 
     """
     return points[:3, :]

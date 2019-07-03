@@ -23,6 +23,11 @@ Transform
 .. autofunction:: calc_random_deformation3d
 .. autofunction:: calc_random_intensity_transform
 
+Homogeneous conversions
+-----------------------
+.. automodule:: image_processing_3d.homogeneous_conversions
+   :members:
+
 Index
 =====
 * :ref:`genindex`
