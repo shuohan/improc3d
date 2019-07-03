@@ -22,8 +22,9 @@ copyright = '2019, Shuo Han'
 author = 'Shuo Han'
 
 # The full version, including alpha/beta/rc tags
-release = '0.3.6'
-
+import subprocess
+command = ['git', 'describe', '--tags']
+release = subprocess.check_output(command).decode().strip()
 
 # -- General configuration ---------------------------------------------------
 
