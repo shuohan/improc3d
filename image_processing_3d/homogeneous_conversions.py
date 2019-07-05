@@ -46,7 +46,7 @@ def convert_points_to_homogeneous(points):
 
     Returns:
         numpy.ndarray: Points in the homogeneous coordinate. A 2D array with
-            shape 4 x num_points.
+        shape 4 x num_points.
 
     """
     points = np.vstack([points, np.ones((1, points.shape[1]))])
@@ -62,7 +62,7 @@ def convert_points_from_homogeneous(points):
 
     Returns:
         numpy.ndarray: Non-homogeneous points. A 2D array with shape
-            3 x num_points.
+        3 x num_points.
 
     """
     return points[:3, :]

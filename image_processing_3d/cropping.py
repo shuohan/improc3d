@@ -20,21 +20,21 @@ def crop3d(image, bbox):
     corresponing cropping area in the target image is (1:3, 0:2).
 
     Args:
-        image (numpy.ndarray, 3D or 4D): The image to crop. If ``image`` is 4D,
+        image (numpy.ndarray): The 3D or 4D image to crop. If ``image`` is 4D,
             the 0 dimension is assumed to be the channels and the same bounding
             box will be applied to all the channels.
-        bbox (tuple of slice, 3D): The bounding box. The start and stop of
+        bbox (tuple): The 3 :class:`slice` bounding box. The start and stop of
             each slice should not be ``None``.
 
     Returns
     -------
-        cropped: numpy.ndarray, 3D
-            The cropped image. If ``image`` is 4D, ``cropped`` is also 4D and
-            channel first.
-        source_bbox: tuple of slice, 3D
-            The bounding box in the source image.
-        target_bbox: tuple of slice, 3D
-            The bounding box in the target image.
+        cropped: numpy.ndarray
+            The 3D or 4D cropped image. If ``image`` is 4D, ``cropped`` is also
+            4D and channel first.
+        source_bbox: tuple
+            The 3 :class:`slice` bounding box in the source image.
+        target_bbox: tuple
+            The 3 :class:`slice` bounding box in the target image.
 
     """
     num_dims = len(bbox)
@@ -58,15 +58,15 @@ def _calc_source_bounding_box(bbox, source_shape):
     cropping.
 
     Args:
-        bbox ((3,) list of slice): The bounding box of the cropping. The
+        bbox (tuple): The 3 :class:`slice` bounding box of the cropping. The
             start of the slice could be negative meaning to pad zeros on the
             left; the stop of the slice could be greater than the size of
             the image along this direction, which means to pad zeros on the
             right.
-        source_shape ((3,) tuple): The shape of the image to crop.
+        source_shape (tuple): The 3 :class:`int` shape of the image to crop.
 
     Returns:
-        tuple of slice, 3D: The bounding box used to extract data from the
+        tuple: The 3 :class:`slice` bounding box used to extract data from the
             source image to crop.
 
     """
@@ -87,17 +87,17 @@ def _calc_target_bounding_box(bbox, source_shape, target_shape):
     to the number of pixels target size exceeding the source size.
 
     Args:
-        bbox (tuple of slice, 3D): The bounding box for the cropping. The
+        bbox (tuple): The 3 :class:`slice` bounding box for the cropping. The
             start of the slice can be negative, meaning to pad zeros on the
             left; the stop of the slice can be greater than the size of
             the image along this direction, meaning to pad zeros on the
             right.
-        source_shape (tuple, 3D): The shape of the image to crop.
-        target_shape (tuple, 3D): The shape of the cropped image.
+        source_shape (tuple): The 3 :class:`int` shape of the image to crop.
+        target_shape (tuple): The 3 :class:`int` shape of the cropped image.
 
     Returns:
-        tuple of slice, 3D: The bounding box of the cropped image used to put
-            the extracted data from the source image into the traget image.
+        tuple: The 3 :class:`slice` bounding box of the cropped image used to
+            put the extracted data from the source image into the traget image.
 
     """
     target_bbox = list()
@@ -115,13 +115,13 @@ def calc_bbox3d(mask):
     the mask then unites all of them together to get a single bounding box.
 
     Args:
-        mask (numpy.ndarray, 3D or 4D): The mask to calculate the bounding
+        mask (numpy.ndarray): The 3D or 4D mask to calculate the bounding
             box from; if 4D, the first dimension is assumed to be channels and
             only the first channel is used to calculate the bounding box since
             the same mask should be applied to all channels of an image.
 
     Returns:
-        tuple of slice, 3D: The bounding box around the mask.
+        tuple: The 3 :class:`slice` bounding box around the mask.
 
     """
     mask = mask.astype(bool)
@@ -144,12 +144,13 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
     is smaller than ``bbox``, the left and right of ``bbox`` is cropped.
 
     Args:
-        bbox (tuple of slice, 3D): The bbox to resize.
-        bbox_shape (tuple of int, 3D): The shape of the resized bbox.
-        allow_smaller (bool): Allow ``bbox_shape`` is smaller than ``bbox``
+        bbox (tuple): The 3 :class:`slice` bbox to resize.
+        bbox_shape (tuple): The 3 :class:`int` shape of the resized bbox.
+        allow_smaller (bool, optional): Allow ``bbox_shape`` is smaller than
+            ``bbox``.
 
     Returns:
-        tuple of slice, 3D: The resized bounding box.
+        tuple: The 3 :class:`int` resized bounding box.
 
     Raises:
         RuntimeError: ``bbox_shape`` is smaller than ``bbox`` if
@@ -176,16 +177,17 @@ def uncrop3d(image, source_shape, source_bbox, target_bbox):
     """Reverses :func:`crop3d` but pads zeros around the cropped region.
 
     Args:
-        image (numpy.ndarray, 3D or 4D): The image to uncrop; channels first if
+        image (numpy.ndarray): The 3D or 4D image to uncrop; channels first if
             ``image`` is 4D.
-        source_shape (tuple of int, 3D or 4D): The shape of uncropped image.
-        source_bbox (tuple of slice, 3D): The bounding box used to crop the
+        source_shape (tuple): The 3 :class:`int` spatial shape of uncropped
+            image.
+        source_bbox (tuple): The 3 :class:`slice` bounding box used to crop the
             original image.
-        target_bbox (tuple of slice, 3D): The corresponding bounding box in the
-            cropped image.
+        target_bbox (tuple): The 3 :class:`slice` corresponding bounding box in
+            the cropped image.
 
     Returns:
-        numpy.ndarray, 3D or 4D: The uncropped image; channels first if 4D.
+        numpy.ndarray: The 3D or 4D uncropped image; channels first if 4D.
 
     """
     uncropped = np.zeros(source_shape, dtype=image.dtype)

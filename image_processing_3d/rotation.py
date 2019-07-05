@@ -12,6 +12,10 @@ from .homogeneous_conversions import convert_points_from_homogeneous
 
 def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     """Rotates an 3D image around a point.
+
+    This function assumes 0 outside the image. If the input image is 4D, it
+    assumes channel-first and applies the same rotation for each of the
+    channels.
     
     Args:
         image (numpy.ndarray): The 3D or 4D image to rotate; channel first when
@@ -22,7 +26,8 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
         point (tuple, optional): The 3D rotation point; use the image center as
             the rotation point if ``None``. Otherwise, it can be :class:`tuple`
             or :class:`numpy.ndarray` of :class:`float`.
-        order (int, optional): The interpolation order.
+        order (int, optional): The interpolation order. See
+            :func:`scipy.ndimage.interpolation.map_coordinates`.
 
     """
     if point is None:
@@ -130,7 +135,7 @@ def calc_image_coords(shape):
         shape (tuple): The 3-element :py:class:`int` spatial shape of the image.
 
     Returns:
-        coords (numpy.ndarray): The coordinates of image voxels
+        coords (numpy.ndarray): The coordinates of image voxels.
 
     """
     grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
