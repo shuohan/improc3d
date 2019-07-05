@@ -14,4 +14,5 @@ setup(name='image-processing-3d',
       author='Shuo Han',
       author_email='shan50@jhu.edu',
       scripts=scripts,
+      install_requires=['numpy', 'scipy'],
       packages=['image_processing_3d'])
