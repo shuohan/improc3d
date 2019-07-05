@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import convert_grid_to_coords
+from .utils import calc_image_coords
 from .homogeneous_conversions import convert_rotation_to_homogeneous
 from .homogeneous_conversions import convert_translation_to_homogeneous
 from .homogeneous_conversions import convert_points_to_homogeneous
@@ -126,18 +126,3 @@ def _calc_rotation_z(angle):
                          [np.sin(angle), np.cos(angle), 0],
                          [0, 0, 1]])
     return rotation
-
-
-def calc_image_coords(shape):
-    """Calculates the coordinates of all image voxels.
-
-    Args:
-        shape (tuple): The 3-element :py:class:`int` spatial shape of the image.
-
-    Returns:
-        coords (numpy.ndarray): The coordinates of image voxels.
-
-    """
-    grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
-    coords = convert_grid_to_coords(grid)
-    return coords

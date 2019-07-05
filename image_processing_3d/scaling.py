@@ -3,12 +3,12 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import convert_grid_to_coords
+from .utils import calc_image_coords
 from .homogeneous_conversions import convert_rotation_to_homogeneous
 from .homogeneous_conversions import convert_translation_to_homogeneous
 from .homogeneous_conversions import convert_points_to_homogeneous
 from .homogeneous_conversions import convert_points_from_homogeneous
-from .rotation import _calc_rotation_around_point, calc_image_coords
+from .rotation import _calc_rotation_around_point
 
 
 _calc_scaling_around_point = _calc_rotation_around_point
