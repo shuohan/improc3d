@@ -3,9 +3,10 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import calc_image_coords, calc_transformation_around_point
-from .homogeneous_conversions import convert_points_to_homogeneous
-from .homogeneous_conversions import convert_points_from_homogeneous
+from .utils import calc_image_coords
+from .utils import calc_transformation_around_point
+from .utils import convert_points_to_homogeneous
+from .utils import convert_points_from_homogeneous
 
 
 def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
