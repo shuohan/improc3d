@@ -7,4 +7,4 @@ This repository contains some functions to process 3D images or multi-channel 3D
 * Scale
 * Deform
 
-See the [documentation](http://utils.gitlab.io/image_processing_3d) for more details.
+See the [documentation](https://shan-utils.gitlab.io/image-processing-3d) for more details.
