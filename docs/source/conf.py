@@ -61,3 +61,4 @@ html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
 
 napoleon_use_rtype = False
+autodoc_mock_imports = ['numpy', 'scipy']
