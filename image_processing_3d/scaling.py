@@ -3,15 +3,9 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import calc_image_coords
-from .homogeneous_conversions import convert_rotation_to_homogeneous
-from .homogeneous_conversions import convert_translation_to_homogeneous
+from .utils import calc_image_coords, calc_transformation_around_point
 from .homogeneous_conversions import convert_points_to_homogeneous
 from .homogeneous_conversions import convert_points_from_homogeneous
-from .rotation import _calc_rotation_around_point
-
-
-_calc_scaling_around_point = _calc_rotation_around_point
 
 
 def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
@@ -42,7 +36,7 @@ def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
     inverse_scaling = np.array([[1/x_scale, 0, 0],
                                 [0, 1/y_scale, 0],
                                 [0, 0, 1/z_scale]])
-    inverse_transform = _calc_scaling_around_point(inverse_scaling, point)
+    inverse_transform = calc_transformation_around_point(inverse_scaling, point)
 
     target_coords = calc_image_coords(image.shape[-3:])
     target_coords = convert_points_to_homogeneous(target_coords)

@@ -7,18 +7,18 @@
 import numpy as np
 
 
-def convert_rotation_to_homogeneous(rotation):
-    """Converts the 3x3 rotation matrix into the homogeneous coordinate.
+def convert_transformation_to_homogeneous(trans):
+    """Converts the 3x3 transformation matrix into the homogeneous coordinate.
 
     Args:
-        rotation (numpy.ndarray): The 3D rotation matrix to convert.
+        trans (numpy.ndarray): The 3D transformation matrix to convert.
     
     Returns:
         numpy.ndarray: Homogeneous rotation matrix.
 
     """
     result = np.eye(4)
-    result[:3, :3] = rotation
+    result[:3, :3] = trans
     return result
 
 

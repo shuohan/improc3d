@@ -2,6 +2,9 @@
 
 import numpy as np
 
+from .homogeneous_conversions import convert_transformation_to_homogeneous
+from .homogeneous_conversions import convert_translation_to_homogeneous
+
 
 def convert_grid_to_coords(grid):
     """Converts a meshgrid to coordinate points.
@@ -45,3 +48,25 @@ def calc_image_coords(shape):
     grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
     coords = convert_grid_to_coords(grid)
     return coords
+
+
+def calc_transformation_around_point(trans, point):
+    """Calculates the transformation around a point.
+
+    It first translates the image so the ``point`` is at the origin, then
+    applies the rotation, scaling, etc., and finally translates the image back
+    so ``point`` does not change.
+    
+    Args:
+        trans (numpy.ndarray): The 3x3 matrix to transform a 3D point.
+        point (numpy.ndarray): The 3D rotation point.
+
+    Returns:
+        numpy.ndarray: The 4x4 homogeneous transformation matrix.
+
+    """
+    trans = convert_transformation_to_homogeneous(trans)
+    shift_to_origin = convert_translation_to_homogeneous(-point)
+    shift_back = convert_translation_to_homogeneous(point)
+    trans = shift_back @ trans @ shift_to_origin
+    return trans

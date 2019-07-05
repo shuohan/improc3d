@@ -3,9 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import calc_image_coords
-from .homogeneous_conversions import convert_rotation_to_homogeneous
-from .homogeneous_conversions import convert_translation_to_homogeneous
+from .utils import calc_image_coords, calc_transformation_around_point
 from .homogeneous_conversions import convert_points_to_homogeneous
 from .homogeneous_conversions import convert_points_from_homogeneous
 
@@ -38,8 +36,8 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rotation = rotation_z @ rotation_y @ rotation_x
 
-    inverse_rotation = np.linalg.inv(rotation)
-    inverse_transform = _calc_rotation_around_point(inverse_rotation, point)
+    inverse_rot = np.linalg.inv(rotation)
+    inverse_transform = calc_transformation_around_point(inverse_rot, point)
 
     target_coords = calc_image_coords(image.shape[-3:])
     target_coords = convert_points_to_homogeneous(target_coords)
@@ -56,28 +54,6 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     rotated_image = np.reshape(interpolation, image.shape)
 
     return rotated_image 
-
-
-def _calc_rotation_around_point(rotation, point):
-    """Calculates the rotation around a point.
-
-    It first translates the image so the ``point`` is at the origin, then
-    applies the rotation, and finally translates the image back so ``point``
-    does not change.
-    
-    Args:
-        rotation (numpy.ndarray): The 3x3 rotation matrix.
-        point (numpy.ndarray): The 3D rotation point.
-
-    Returns:
-        numpy.ndarray: The 4x4 homogeneous rotation matrix.
-
-    """
-    rotation = convert_rotation_to_homogeneous(rotation)
-    shift_to_origin = convert_translation_to_homogeneous(-point)
-    shift_back = convert_translation_to_homogeneous(point)
-    transformation = shift_back @ rotation @ shift_to_origin
-    return transformation
 
 
 def _calc_rotation_x(angle):
