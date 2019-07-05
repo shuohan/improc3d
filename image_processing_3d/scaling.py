@@ -15,23 +15,25 @@ _calc_scaling_around_point = _calc_rotation_around_point
 
 
 def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
-    """Scale a 3D image around a point
+    """Scales a 3D image around a point.
 
-    Scale a 3D image around a point. If the input image is a channel-first
-    multi-channel 3D image (i.e. 4D image with the first dimension as channels),
-    this funcition scale the image per channel. 
+    This function scales a 3D image around a point. If the input image is a
+    channel-first multi-channel 3D image (i.e. 4D image with the first dimension
+    as channels), this funcition uses the same factors to scale the image for
+    each channel.
     
     Args:
-        image (3D numpy.array): The image to scale
-        x_scale (float): Scaling factor along x axis
-        y_scale (float): Scaling factor along y axis
-        z_scale (float): Scaling factor along z axis
-        point ((3,) tuple): The scaling center point. If None, use the image
-            center
-        order (int): The interpolation order
+        image (numpy.ndarray): The 3D or 4D image to scale. Channel first if 4D.
+        x_scale (float): The scaling factor along x axis.
+        y_scale (float): The scaling factor along y axis.
+        z_scale (float): The scaling factor along z axis.
+        point (iterable, optional): The 3D scaling center point. If ``None``,
+            use the image center as the scaling center. Otherwise, it can be a
+            :py:class:`tuple` or :class:`numpy.ndarray` of :class:float.
+        order (int, optional): The interpolation order.
 
     Returns:
-        scaled_image (3D numpy.array): The scaled image
+        numpy.ndarray: The 3D or 4D scaled image.
 
     """
     if point is None:

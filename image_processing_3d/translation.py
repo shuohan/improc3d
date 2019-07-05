@@ -4,22 +4,23 @@ import numpy as np
 
 
 def translate3d_int(image, x_trans, y_trans, z_trans):
-    """Translate 3d image with integer translation
+    """Translates a 3D image with integer translation.
     
-    Outside the image is assumed to be 0.
+    This function uses 0 as the voxel values outside the image. If the image is
+    4D, it assumes the image is channel first and applies the same translation
+    to each channel.
 
     Args:
-        image (3D/4D numpy.array): The 3D image to translate. If not 3D, the
-            first axis is assuemd to be channels like RGB
-        x_trans (int/float): The translation along x axis. If not integer, the
-            translation is rounded 
-        y_trans (int/float): The translation along y axis. If not integer, the
-            translation is rounded 
-        z_trans (int/float): The translation along z axis. If not integer, the
-            translation is rounded 
+        image (numpy.ndarray): The image to translate. Channel first if 4D.
+        x_trans (int or float): The translation along x axis. If not
+            :class:`int`, the translation is rounded.
+        y_trans (int or float): The translation along y axis. If not 
+            :class:`int`, the translation is rounded.
+        z_trans (int or float): The translation along z axis. If not
+            :class:`int`, the translation is rounded.
 
     Returns:
-        translated (3D/4D numpy.array): The translated image
+        numpy.ndarray: The 3D or 4D translated image.
 
     """
     x_trans = int(np.round(x_trans))
@@ -39,15 +40,18 @@ def translate3d_int(image, x_trans, y_trans, z_trans):
 
 
 def _calc_index(trans, size):
-    """Calculate target and source indexing slices from translation
+    """Calculates target and source indexing :class:`slice` along a single axis.
 
     Args:
-        trans (int): The translation of the data
-        size (int): The size of the data
+        trans (int): The translation of the data.
+        size (int): The size of the data.
 
-    Returns:
-        source (slice): The indexing slice in the source data
-        target (slice): The indexing slice in the target data
+    Returns
+    -------
+    source: slice
+        The indexing in the source data.
+    target: slice
+        The indexing in the target data.
 
     """
     if trans > 0:
