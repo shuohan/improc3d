@@ -8,7 +8,7 @@ pages:
   - cd docs/
   - make html
   - cd -
-  - mv docs/_build/html public/
+  - mv docs/build/html public/
   artifacts:
     paths:
     - public
