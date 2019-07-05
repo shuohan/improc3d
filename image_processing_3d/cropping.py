@@ -5,7 +5,7 @@ from scipy.ndimage.measurements import find_objects
 
 
 def crop3d(image, bbox):
-    """Crop 3D image using a bounding box
+    """Crops a 3D image using a bounding box.
 
     The size of bbox can be larger than the image. In that case, 0 will be put
     into the extra area. To copy the data within the bbox from the source image
@@ -20,16 +20,21 @@ def crop3d(image, bbox):
     corresponing cropping area in the target image is (1:3, 0:2).
 
     Args:
-        image (3D numpy.array): The image to crop. If `image` is 4D, the 0
-            dimension is assumed to be the channels
-        bbox ((3,) tuple of slice): The bounding box. `start` and `stop` of
-            `slice` should not be `None`
+        image (numpy.ndarray): The 3D or 4D image to crop. If ``image`` is 4D,
+            the 0 dimension is assumed to be the channels and the same bounding
+            box will be applied to all the channels.
+        bbox (tuple): The 3 :class:`slice` bounding box. The start and stop of
+            each slice should not be ``None``.
 
-    Returns:
-        cropped (3D numpy.array): The cropped image. If `image` is 4D, `cropped`
-            is also 4D and channel first.
-        source_bbox ((3,) list of slice): The bbox in the source image
-        target_bbox ((3,) list of slice): The bbox in the target image
+    Returns
+    -------
+        cropped: numpy.ndarray
+            The 3D or 4D cropped image. If ``image`` is 4D, ``cropped`` is also
+            4D and channel first.
+        source_bbox: tuple
+            The 3 :class:`slice` bounding box in the source image.
+        target_bbox: tuple
+            The 3 :class:`slice` bounding box in the target image.
 
     """
     num_dims = len(bbox)
@@ -47,22 +52,22 @@ def crop3d(image, bbox):
 
 
 def _calc_source_bounding_box(bbox, source_shape):
-    """Calculate the bounding of the source image to crop
+    """Calculates the bounding of the source image to crop.
 
     The data of the image within this source bounding is extracted for
     cropping.
 
     Args:
-        bbox ((3,) list of slice): The bounding box of the cropping. The
+        bbox (tuple): The 3 :class:`slice` bounding box of the cropping. The
             start of the slice could be negative meaning to pad zeros on the
             left; the stop of the slice could be greater than the size of
             the image along this direction, which means to pad zeros on the
-            right
-        source_shape ((3,) tuple): The shape of the image to crop
+            right.
+        source_shape (tuple): The 3 :class:`int` shape of the image to crop.
 
     Returns:
-        source_bbox ((3,) list of slice): The bounding box used to extract
-            data from the source image to crop
+        tuple: The 3 :class:`slice` bounding box used to extract data from the
+            source image to crop.
 
     """
     source_bbox = list()
@@ -74,26 +79,25 @@ def _calc_source_bounding_box(bbox, source_shape):
 
 
 def _calc_target_bounding_box(bbox, source_shape, target_shape):
-    """Calculate the bounding of the cropped target image
+    """Calculates the bounding of the cropped target image.
 
-    `bbox` is relative to the shape of the source image. For the target
+    ``bbox`` is relative to the shape of the source image. For the target
     image, the number of pixels on the left is equal to the absolute value of
     the negative start (if any), and the number of pixels on the right is equal
     to the number of pixels target size exceeding the source size.
 
     Args:
-        bbox ((3,) list of slice): The bounding box of the cropping. The
-            start of the slice could be negative meaning to pad zeros on the
-            left; the stop of the slice could be greater than the size of
-            the image along this direction, which means to pad zeros on the
-            right
-        source_shape ((3,) tuple): The shape of the image to crop
-        target_shape ((3,) tuple): The shape of the cropped image
+        bbox (tuple): The 3 :class:`slice` bounding box for the cropping. The
+            start of the slice can be negative, meaning to pad zeros on the
+            left; the stop of the slice can be greater than the size of
+            the image along this direction, meaning to pad zeros on the
+            right.
+        source_shape (tuple): The 3 :class:`int` shape of the image to crop.
+        target_shape (tuple): The 3 :class:`int` shape of the cropped image.
 
     Returns:
-        target_bbox ((3,) list of slice): The bounding box of the cropped
-            image used to put the extracted data from the source image into
-            the traget image
+        tuple: The 3 :class:`slice` bounding box of the cropped image used to
+            put the extracted data from the source image into the traget image.
 
     """
     target_bbox = list()
@@ -105,18 +109,19 @@ def _calc_target_bounding_box(bbox, source_shape, target_shape):
 
 
 def calc_bbox3d(mask):
-    """Calculate bounding box surrounding the mask
+    """Calculates the bounding box surrounding the mask.
 
-    Calcualte the bounding boxes of connected components in the mask and unite
-    them all.
+    This function calcualtes the bounding boxes of all connected components in
+    the mask then unites all of them together to get a single bounding box.
 
     Args:
-        mask (3D/4D numpy.array): The mask to calculate bbox from; if 4D, the
-            first is assume to be channels and only the first channel is used to
-            calculate the bbox
+        mask (numpy.ndarray): The 3D or 4D mask to calculate the bounding
+            box from; if 4D, the first dimension is assumed to be channels and
+            only the first channel is used to calculate the bounding box since
+            the same mask should be applied to all channels of an image.
 
     Returns:
-        bbox (1x3 list of slice): Calculated bounding box
+        tuple: The 3 :class:`slice` bounding box around the mask.
 
     """
     mask = mask.astype(bool)
@@ -132,22 +137,24 @@ def calc_bbox3d(mask):
 
 
 def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
-    """Resize bbox to have bbox_shape
+    """Resizes a bounding box to a certain shape.
 
-    If the `bbox_shape` is larger than `bbox`, the left and right of `bbox` is
-    padded by the same amount of space. If the `bbox_shape` is smaller than
-    `bbox`, the left and right of `bbox` is cropped by the same amount.
+    If the ``bbox_shape`` is larger than ``bbox``, the left and right of
+    ``bbox`` is padded by the same amount of extra space. If ``bbox_shape``
+    is smaller than ``bbox``, the left and right of ``bbox`` is cropped.
 
     Args:
-        bbox ((3,) tuple of slice): The bbox to resize
-        bbox_shape ((3,) tuple of int): The shape of the resized bbox
-        allow_smaller (bool): Allow `bbox_shape` is smaller than `bbox`
+        bbox (tuple): The 3 :class:`slice` bbox to resize.
+        bbox_shape (tuple): The 3 :class:`int` shape of the resized bbox.
+        allow_smaller (bool, optional): Allow ``bbox_shape`` is smaller than
+            ``bbox``.
 
     Returns:
-        resized_bbox (1x3 list of slice): Resized bounding box
+        tuple: The 3 :class:`int` resized bounding box.
 
     Raises:
-        RuntimeError: `bbox_shape` is smaller than the mask
+        RuntimeError: ``bbox_shape`` is smaller than ``bbox`` if
+            ``allow_smaller`` is ``False``.
     
     """
     resized_bbox = list()
@@ -167,17 +174,20 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
 
 
 def uncrop3d(image, source_shape, source_bbox, target_bbox):
-    """Reverse crop3d but pad zeros around the cropped region
+    """Reverses :func:`crop3d` but pads zeros around the cropped region.
 
     Args:
-        image (3D/4D numpy.array): The image to uncrop; if 4D, channels first
-        source_shape ((3,) or (4,) tuple): The shape of uncropped image
-        source_bbox ((3,) or (4,) list of slice): The bbox used to crop the image
-        target_bbox ((3,) or (4,) list of slice): The corresponding bbox in the
-            cropped image
+        image (numpy.ndarray): The 3D or 4D image to uncrop; channels first if
+            ``image`` is 4D.
+        source_shape (tuple): The 3 :class:`int` spatial shape of uncropped
+            image.
+        source_bbox (tuple): The 3 :class:`slice` bounding box used to crop the
+            original image.
+        target_bbox (tuple): The 3 :class:`slice` corresponding bounding box in
+            the cropped image.
 
     Returns:
-        uncropped (3D/4D numpy.array): Uncropped image; if 4D, channels first
+        numpy.ndarray: The 3D or 4D uncropped image; channels first if 4D.
 
     """
     uncropped = np.zeros(source_shape, dtype=image.dtype)

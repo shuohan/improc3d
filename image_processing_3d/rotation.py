@@ -3,23 +3,30 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import convert_grid_to_coords
-from .homogeneous_conversions import convert_rotation_to_homogeneous
-from .homogeneous_conversions import convert_translation_to_homogeneous
-from .homogeneous_conversions import convert_points_to_homogeneous
-from .homogeneous_conversions import convert_points_from_homogeneous
+from .utils import calc_image_coords
+from .utils import calc_transformation_around_point
+from .utils import convert_points_to_homogeneous
+from .utils import convert_points_from_homogeneous
 
 
 def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
-    """Rotate a 3D image around a point
+    """Rotates an 3D image around a point.
+
+    This function assumes 0 outside the image. If the input image is 4D, it
+    assumes channel-first and applies the same rotation for each of the
+    channels.
     
     Args:
-        image (3D numpy.array): The image to rotate
-        x_angle (float): Rotation angle around x axis in degree
-        y_angle (float): Rotation angle around y axis in degree
-        z_angle (float): Rotation angle around z axis in degree
-        point ((3,) tuple): The rotation point; if None, use the image center
-        order (int): The interpolation order
+        image (numpy.ndarray): The 3D or 4D image to rotate; channel first when
+            it is 4D.
+        x_angle (float): Rotation angle around x axis in degrees.
+        y_angle (float): Rotation angle around y axis in degrees.
+        z_angle (float): Rotation angle around z axis in degrees.
+        point (tuple, optional): The 3D rotation point; use the image center as
+            the rotation point if ``None``. Otherwise, it can be :class:`tuple`
+            or :class:`numpy.ndarray` of :class:`float`.
+        order (int, optional): The interpolation order. See
+            :func:`scipy.ndimage.interpolation.map_coordinates`.
 
     """
     if point is None:
@@ -30,8 +37,8 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rotation = rotation_z @ rotation_y @ rotation_x
 
-    inverse_rotation = np.linalg.inv(rotation)
-    inverse_transform = _calc_rotation_around_point(inverse_rotation, point)
+    inverse_rot = np.linalg.inv(rotation)
+    inverse_transform = calc_transformation_around_point(inverse_rot, point)
 
     target_coords = calc_image_coords(image.shape[-3:])
     target_coords = convert_points_to_homogeneous(target_coords)
@@ -50,36 +57,14 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     return rotated_image 
 
 
-def _calc_rotation_around_point(rotation, point):
-    """Calculate the rotation around a point
-
-    It first translates the image so the `point` is at the origin, then
-    applies the rotation, and finally translates the image back so `point`
-    does not change.
-    
-    Args:
-        rotation (3x3 numpy.array): The rotation matrix
-        point ((3,) numpy.array): The rotation origin
-
-    Returns:
-        transformation (4x4 numpy.array): Homogeneous rotation
-
-    """
-    rotation = convert_rotation_to_homogeneous(rotation)
-    shift_to_origin = convert_translation_to_homogeneous(-point)
-    shift_back = convert_translation_to_homogeneous(point)
-    transformation = shift_back @ rotation @ shift_to_origin
-    return transformation
-
-
 def _calc_rotation_x(angle):
-    """Calculate 3D rotation matrix around the first axis
+    """Calculates 3D rotation matrix around the first axis.
 
     Args:
-        angle (float): The rotation angle in rad
+        angle (float): The rotation angle in rad.
     
     Returns:
-        rotation (3x3 numpy.array): The rotation matrix
+        numpy.ndarray: The 3x3 rotation matrix.
 
     """
     rotation = np.array([[1, 0, 0],
@@ -89,13 +74,13 @@ def _calc_rotation_x(angle):
 
 
 def _calc_rotation_y(angle):
-    """Calculate 3D rotation matrix around the second axis
+    """Calculates 3D rotation matrix around the second axis.
 
     Args:
-        angle (float): The rotation angle in rad
+        angle (float): The rotation angle in rad.
     
     Returns:
-        rotation (3x3 numpy array): The rotation matrix
+        numpy.ndarray: The 3x3 rotation matrix.
 
     """
     rotation = np.array([[np.cos(angle), 0, np.sin(angle)],
@@ -105,31 +90,16 @@ def _calc_rotation_y(angle):
 
 
 def _calc_rotation_z(angle):
-    """Calculate 3D rotation matrix around the third axis
+    """Calculates 3D rotation matrix around the third axis.
 
     Args:
-        angle (float): The rotation angle in rad
+        angle (float): The rotation angle in rad.
     
     Returns:
-        rotation (3x3 numpy array): The rotation matrix
+        numpy.ndarray: The 3x3 rotation matrix.
 
     """
     rotation = np.array([[np.cos(angle), -np.sin(angle), 0],
                          [np.sin(angle), np.cos(angle), 0],
                          [0, 0, 1]])
     return rotation
-
-
-def calc_image_coords(shape):
-    """Calculate the coordinates of image voxels
-
-    Args:
-        shape ((3,) tuple): The shape of the image
-
-    Returns:
-        coords (3 x num_points numpy.array): The coordinates of image voxels
-
-    """
-    grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
-    coords = convert_grid_to_coords(grid)
-    return coords

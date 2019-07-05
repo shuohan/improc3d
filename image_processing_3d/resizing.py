@@ -6,20 +6,29 @@ from .cropping import crop3d, resize_bbox3d
 
 
 def padcrop3d(image, target_shape):
-    """Pad or crop the 3D image to resize
+    """Pads or crops the 3D image to resize.
 
-    Args:
-        image (3D/4D numpy.array): The image to pad; if 4D, the first dimension
-            is assumed to be channels
-        target_shape ((3,) tuple of int): The shape of the resized image
-
-    Returns:
-        result (3D numpy.array): The resized image
-        source_bbox ((3,) list of slice): The bbox in the source image
-        target_bbox ((3,) list of slice): The bbox in the target image
+    This function pads zero to the image if ``target_shape`` exceeds ``image``
+    along an axis and crop it if ``target_shape`` is contained within the
+    ``image``.
 
     NOTE:
-        Use uncrop3d with returned source_bbox and target_bbox to unresize
+        Use :func:`image_processing_3d.uncrop3d` with the returned
+        ``source_bbox`` and ``target_bbox`` by this function  to unresize.
+
+    Args:
+        image (numpy.ndarray): The 3D or 4D image to pad or crop; if 4D, the
+            first dimension is assumed to be channels.
+        target_shape (tuple): The 3 :class:`int` shape of the resized image.
+
+    Returns
+    -------
+    result: numpy.ndarray
+        The 3D or 4D resized image.
+    source_bbox: tuple
+        The 3 :class:`slice` bounding box in the source image.
+    target_bbox: tuple
+        The 3 :class:`slice` bounding box in the target image.
 
     """
     if len(image.shape) == 3:

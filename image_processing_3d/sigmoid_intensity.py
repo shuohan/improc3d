@@ -3,20 +3,27 @@
 import numpy as np
 
 
-def calc_random_intensity_transform(klim=(10.0, 20.0), blim=(-1, 1),
+def calc_random_intensity_transform(klim=(10.0, 20.0), blim=(-1.0, 1.0),
                                     num_sigmoid=5):
-    """Calculate random intensity transform
+    """Calculates a random intensity transform.
 
-    Uniformly sample k, b, alpha for mixture of sigmoid to calculate a intensity
-    transform
+    This function uniformly randomly samples :math:`k`, :math:`b`, and
+    :math:`\\alpha`` for mixture of sigmoid to create an intensity transform:
+    
+    .. math::
+        y = \\sum_{i}{{\\alpha}_i\\textrm{sigmoid}(k_i(x + b_i))}
+
+    This functions will rescale :math:`{\\alpha}_i` so the sum is 1.
 
     Args:
-        klim (tuple of float): The lower and higher bound of k
-        blim (tuple of float): The lower and higher bound of b
-        num_sigmoid (int): The number of sigmoid for the mixture
+        klim (tuple, optional): :class:`float` numbers for the lower and higher
+            bound of k.
+        blim (tuple, optional): :class:`float` numbers for the lower and higher
+            bound of b.
+        num_sigmoid (int, optional): The number of sigmoid for the mixture.
 
     Returns:
-        transform (function): The function to map the intensity
+        function: The function to map the intensity.
 
     """
     ks = _sample_k(*klim, num_sigmoid)
@@ -33,19 +40,19 @@ def calc_random_intensity_transform(klim=(10.0, 20.0), blim=(-1, 1),
 
 
 def _sample_k(k_min, k_max, size):
-    """Sample k from a uniform distribution
+    """Samples k from a uniform distribution.
 
-    k can enlarge or shrink the data. Sample k so the largest possible value is
-    `k_max` and the smallest value is `k_min` when enlarging; shrinking is 1
-    divided by the enarging factor
+    k can enlarge or shrink the data. This function samples k so the largest
+    possible value is ``k_max`` and the smallest value is ``k_min`` when
+    enlarging; shrinking is 1 divided by the enarging factor.
 
     Args:
-        k_max (float): The largest enlarging factor
-        k_min (float): The smallest enlarging factor
-        size (int): The number of sampled k
+        k_max (float): The largest enlarging factor.
+        k_min (float): The smallest enlarging factor.
+        size (int): The number of sampled k.
 
     Returns:
-        ks (np.array): The sampled k
+        numpy.ndarray: The sampled k.
 
     """
     ks = np.random.rand(size) * (k_max / k_min - 1) + 1 # from [1, k_max/k_min]
@@ -56,15 +63,15 @@ def _sample_k(k_min, k_max, size):
 
 
 def _sample_b(b_min, b_max, size):
-    """Sample b from a uniform distribution [`b_min`, `b_max`]
+    """Samples b from a uniform distribution [``b_min``, ``b_max``].
 
     Args:
-        b_min (float): The smallest value
-        b_max (float): The largest value
-        size (int): The number of sampled b
+        b_min (float): The smallest value.
+        b_max (float): The largest value.
+        size (int): The number of sampled b.
 
     Returns:
-        bs (np.array): The sampled b
+        numpy.ndarray: The sampled b.
 
     """
     bs = np.random.rand(size) * (b_max - b_min) + b_min
@@ -72,13 +79,13 @@ def _sample_b(b_min, b_max, size):
 
 
 def _sample_alpha(size):
-    """Sample a from a uniform distribution [0, 1]
+    """Samples alpha from a uniform distribution [0, 1].
 
     Args:
-        size (int): The number of sampled alphas
+        size (int): The number of sampled alphas.
 
     Returns:
-        alphas (np.array): The sampled alphas
+        numpy.ndarray: The sampled alphas.
 
     """
     return np.random.rand(size)
@@ -100,15 +107,15 @@ def _mixture_sigmoid(x, ks, bs, alphas):
 
     
 def _scale(x, low, high):
-    """Scale `x` so its min is `low` and max is `high`
+    """Scales ``x`` so its min is ``low`` and max is ``high``.
     
     Args:
-        x (numpy.array): The array to scale
-        low (float): The target minimum value
-        high (float): The target maximum value
+        x (numpy.ndarray): The array to scale.
+        low (float): The target minimum value.
+        high (float): The target maximum value.
 
     Returns:
-        y (numpy.array): The scaled array
+        numpy.ndarray: The scaled array.
 
     """
     y = (x - np.min(x)) / (np.max(x) - np.min(x))
