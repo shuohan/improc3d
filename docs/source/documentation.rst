@@ -27,8 +27,8 @@ Reslice
 .. automodule:: image_processing_3d.reslicing
 .. automodule:: image_processing_3d
    :noindex: 
-.. autofunction:: reslice
-.. autofunction:: reslice_coarse
+.. autofunction:: reslice3d
+.. autofunction:: reslice3d_coarse
 .. autofunction:: transform_to_axial
 .. autofunction:: transform_to_coronal
 .. autofunction:: transform_to_sagittal
