@@ -154,14 +154,10 @@ def reslice3d_coarse(image, affine):
         numpy.ndarray: The transformed image.
 
     """
-    print(affine)
     axes = np.argmax(np.abs(affine[:3, :3]), axis=1)
-    print(axes)
     result = np.transpose(image, axes=axes)
     axes = np.arange(3)[np.sum(affine[:3, :3], axis=1)<0]
-    print(axes)
     result = np.flip(result, axis=axes)
-    print('---')
     return result
 
 
