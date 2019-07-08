@@ -7,7 +7,8 @@ from .reslicing import reslice3d
 from .utils import convert_translation_to_homogeneous
 
 
-def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
+def rotate3d(image, x_angle, y_angle, z_angle, pivot=None, order=1,
+             use_source_shape=True):
     """Rotates an 3D image around a point.
 
     This function assumes 0 outside the image. If the input image is 4D, it
@@ -20,23 +21,22 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
         x_angle (float): Rotation angle around x axis in degrees.
         y_angle (float): Rotation angle around y axis in degrees.
         z_angle (float): Rotation angle around z axis in degrees.
-        point (tuple, optional): The 3D rotation point; use the image center as
-            the rotation point if ``None``. Otherwise, it can be :class:`tuple`
-            or :class:`numpy.ndarray` of :class:`float`.
+        pivot (tuple, optional): The 3D rotation pivot point; use the image
+            center as the rotation point if ``None``. Otherwise, it can be
+            :class:`tuple` or :class:`numpy.ndarray` of :class:`float`.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
+        use_source_shape (bool, optional): Use the source image shape as the
+            transformed image shape if ``True``.
 
     """
-    # if point is None:
-    #     point = np.array(image.shape[-3:]) / 2
-    # translation = convert_translation_to_homogeneous(-np.array(point))
-    
-    rotation_x = _calc_rotation_x(x_angle / 180 * np.pi)
-    rotation_y = _calc_rotation_y(y_angle / 180 * np.pi)
-    rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
-    rotation = rotation_z @ rotation_y @ rotation_x
+    rot_x = _calc_rotation_x(x_angle / 180 * np.pi)
+    rot_y = _calc_rotation_y(y_angle / 180 * np.pi)
+    rot_z = _calc_rotation_z(z_angle / 180 * np.pi)
+    rot = rot_z @ rot_y @ rot_x
+    target_shape = image.shape if use_source_shape else None
+    return reslice3d(image, rot, target_shape=target_shape, pivot=pivot)
 
-    return reslice3d(image, rotation)
     # if len(image.shape) == 4:
     #     interpolation = [map_coordinates(im, source_coords, order=order)
     #                      for im in image]
