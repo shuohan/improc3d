@@ -2,9 +2,8 @@
 
 import numpy as np
 from scipy.ndimage.filters import gaussian_filter
-from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import convert_grid_to_coords
+from .utils import convert_grid_to_coords, interp_image
 
 
 def deform3d(image, x_deformation, y_deformation, z_deformation, order=1):
@@ -35,14 +34,8 @@ def deform3d(image, x_deformation, y_deformation, z_deformation, order=1):
     deformation = [x_deformation, y_deformation, z_deformation]
     source_grid = [g - d for g, d in zip(target_grid, deformation)]
     source_coords = convert_grid_to_coords(source_grid)
-    if len(image.shape) == 4:
-        interpolation = [map_coordinates(im, source_coords, order=order)
-                         for im in image]
-        interpolation = np.vstack(interpolation)
-    else:
-        interpolation = map_coordinates(image, source_coords, order=order)
-    deformed_image = np.reshape(interpolation, image.shape)
-    return deformed_image
+    result = interp_image(image, source_coords, order=order)
+    return np.reshape(result, image.shape)
 
 
 def calc_random_deformation3d(image_shape, sigma, scale):

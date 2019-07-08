@@ -29,6 +29,8 @@ def rotate3d(image, x_angle, y_angle, z_angle, pivot=None, order=1,
         use_source_shape (bool, optional): Use the source image shape as the
             transformed image shape if ``True``.
 
+    Returns:
+
     """
     rot_x = _calc_rotation_x(x_angle / 180 * np.pi)
     rot_y = _calc_rotation_y(y_angle / 180 * np.pi)
@@ -36,14 +38,6 @@ def rotate3d(image, x_angle, y_angle, z_angle, pivot=None, order=1,
     rot = rot_z @ rot_y @ rot_x
     target_shape = image.shape if use_source_shape else None
     return reslice3d(image, rot, target_shape=target_shape, pivot=pivot)
-
-    # if len(image.shape) == 4:
-    #     interpolation = [map_coordinates(im, source_coords, order=order)
-    #                      for im in image]
-    #     interpolation = np.vstack(interpolation)
-    # else:
-    #     interpolation = map_coordinates(image, source_coords, order=order)
-    # rotated_image = np.reshape(interpolation, image.shape)
 
 
 def _calc_rotation_x(angle):

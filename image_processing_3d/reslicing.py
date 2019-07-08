@@ -34,11 +34,9 @@ following can be used:
 """
 
 import numpy as np
-from scipy.ndimage.interpolation import map_coordinates
 
 from .utils import convert_grid_to_coords, calc_image_coords
-from .utils import convert_points_to_homogeneous
-from .utils import convert_translation_to_homogeneous
+from .utils import convert_points_to_homogeneous, interp_image
 
 
 def convert_LPIm_to_RAIm(LPIm_affine):
@@ -105,7 +103,7 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot=None):
     """Transforms a 3D image using an affine matrix with interpolation.
 
     Args:
-        image (numpy.ndarray): The image to transform.
+        image (numpy.ndarray): The 3D image to transform. Channel first if 4D.
         affine (numpy.ndarray): 4x4 affine matrix to transform the image.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
@@ -123,17 +121,20 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot=None):
 
     """
     if target_shape is None:
-        target_range = _calc_target_range(image.shape, affine)
+        target_range = _calc_target_range(image.shape[-3:], affine)
         target_shape = _calc_target_shape(target_range)
     else:
-        pivot = _calc_image_center(image.shape) if pivot is None else pivot
+        target_shape = target_shape[-3:]
+        pivot = _calc_image_center(image.shape[-3:]) if pivot is None else pivot
         target_range = _calc_target_range_p(target_shape, pivot, affine)
+    if len(image.shape) == 4:
+        target_shape = (image.shape[0], *target_shape)
+
     target_coords = calc_image_coords(target_range)
     affine_t2s = np.linalg.inv(affine)
-    source_coords = affine_t2s @ target_coords
-    result = map_coordinates(image, source_coords[:3, :], order=order)
-    result = np.reshape(result, target_shape)
-    return result
+    source_coords = (affine_t2s @ target_coords)[:3, :]
+    result = interp_image(image, source_coords, order=order)
+    return np.reshape(result, target_shape)
 
 
 def reslice3d_coarse(image, affine):

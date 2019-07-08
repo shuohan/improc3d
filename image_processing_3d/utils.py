@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+from scipy.ndimage.interpolation import map_coordinates
 
 
 def convert_transformation_to_homogeneous(trans):
@@ -125,23 +126,27 @@ def calc_image_coords(shape, homogeneous=True):
     return coords
 
 
-def calc_transformation_around_point(trans, point):
-    """Calculates the transformation around a point.
+def interp_image(image, source_coords, order=1):
+    """Interpolates a 3D image with coordinates.
 
-    It first translates the image so the ``point`` is at the origin, then
-    applies the rotation, scaling, etc., and finally translates the image back
-    so ``point`` does not change.
-    
+    This function assumes 0 outside the image. If the input image is 4D, it
+    assumes channel-first and interpolates the image at the same coordinates for
+    each channel.
+
     Args:
-        trans (numpy.ndarray): The 3x3 matrix to transform a 3D point.
-        point (numpy.ndarray): The 3D rotation point.
+        image (numpy.ndarray): The image to interpolate; channel first if 4D.
+        source_coords (numpy.ndarray): 3 x num_points coordinates to interpolate
+            from the image. Each column is a 3D point.
+        order (int, optional): The interpolation order. See
+            :func:`scipy.ndimage.interpolation.map_coordinates`.
 
     Returns:
-        numpy.ndarray: The 4x4 homogeneous transformation matrix.
+        numpy.ndarray: An 1D array of the values at each source coordinate.
 
     """
-    trans = convert_transformation_to_homogeneous(trans)
-    shift_to_origin = convert_translation_to_homogeneous(-point)
-    shift_back = convert_translation_to_homogeneous(point)
-    trans = shift_back @ trans @ shift_to_origin
-    return trans
+    if len(image.shape) == 4:
+        result = [map_coordinates(m, source_coords, order=order) for m in image]
+        result = np.vstack(result)
+    else:
+        result = map_coordinates(image, source_coords, order=order)
+    return result
