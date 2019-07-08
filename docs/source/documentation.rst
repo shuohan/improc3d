@@ -13,15 +13,6 @@ Resize
 .. autofunction:: resize_bbox3d
 .. autofunction:: padcrop3d
 
-Transform
----------
-.. autofunction:: deform3d
-.. autofunction:: rotate3d
-.. autofunction:: scale3d
-.. autofunction:: translate3d_int
-.. autofunction:: calc_random_deformation3d
-.. autofunction:: calc_random_intensity_transform
-
 Reslice
 -------
 .. automodule:: image_processing_3d.reslicing
@@ -36,6 +27,15 @@ Reslice
 .. autofunction:: convert_LPIm_to_RAIm
 .. autofunction:: convert_LPIm_to_RSAm
 .. autofunction:: convert_LPIm_to_ASRm
+
+Transform
+---------
+.. autofunction:: deform3d
+.. autofunction:: rotate3d
+.. autofunction:: scale3d
+.. autofunction:: translate3d_int
+.. autofunction:: calc_random_deformation3d
+.. autofunction:: calc_random_intensity_transform
 
 Utilities
 -----------------------
