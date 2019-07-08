@@ -113,14 +113,15 @@ def reslice(image, affine, order=1):
         numpy.ndarray: The transformed image.
 
     """
+    print(affine)
     target_range = _calc_target_coords_range(image.shape, affine)
-    target_shape = _calc_target_shape(target_range)
-    grid = np.meshgrid(*[np.arange(s) for s in target_shape], indexing='xy')
+    grid = np.meshgrid(*[np.arange(start, stop)
+                         for (start, stop) in target_range], indexing='xy')
     target_coords = convert_grid_to_coords(grid)
     target_coords = convert_points_to_homogeneous(target_coords)
 
-    offset = convert_translation_to_homogeneous(target_range[:, 0])
-    affine_t2s = np.linalg.inv(affine) @ offset
+    affine_t2s = np.linalg.inv(affine)
+    print(affine_t2s)
     source_coords = affine_t2s @ target_coords
     result = map_coordinates(image, source_coords[:3, :], order=order)
     result = np.reshape(result, grid[0].shape)
