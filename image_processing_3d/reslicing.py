@@ -101,7 +101,7 @@ def convert_LPIm_to_ASRm(LPIm_affine):
     return affine
 
 
-def reslice(image, affine, order=1):
+def reslice(image, affine, order=1, target_shape=None, pivot_point=None):
     """Transforms a 3D image using an affine matrix with interpolation.
 
     Args:
@@ -109,17 +109,37 @@ def reslice(image, affine, order=1):
         affine (numpy.ndarray): 4x4 affine matrix to transform the image.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
+        target_shape (tuple, optional): 3 :class:`int` spatial shape of the
+            transformed image. If ``None``, use the transformed corners from
+            the source image to calculate the targe ranage; otherwise, the
+            target shape is symmetric around the transformed ``pivot_point``
+            from the source image.
+        pivot_point (tuple, optional): :class:`int` 3D point for calculating
+            the target range with ``target_shape``. If ``None``, use the center
+            of the source image.
 
     Returns:
         numpy.ndarray: The transformed image.
 
     """
-    target_range = _calc_target_coords_range(image.shape, affine)
+    if target_shape is None:
+        target_range = _calc_target_coords_range(image.shape, affine)
+        target_shape = (target_range[:, 1] - target_range[:, 0]).astype(int)
+    else:
+        target_shape_r = np.reshape(target_shape, (3, 1))
+        if pivot_point is None:
+            pivot_point = (np.array(image.shape[-3:]) - 1) / 2.0
+        pivot_point = np.reshape(pivot_point, (3, 1))
+        pivot_point = convert_points_to_homogeneous(pivot_point)
+        t_pivot = (affine @ pivot_point)[:3, :]
+        starts = t_pivot - target_shape_r / 2.0
+        stops = starts + target_shape_r
+        target_range = np.hstack((starts, stops))
     target_coords = calc_image_coords(target_range)
     affine_t2s = np.linalg.inv(affine)
     source_coords = affine_t2s @ target_coords
     result = map_coordinates(image, source_coords[:3, :], order=order)
-    result = np.reshape(result, calc_transformed_shape(image.shape, affine))
+    result = np.reshape(result, target_shape)
     return result
 
 
