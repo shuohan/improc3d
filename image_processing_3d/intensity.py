@@ -3,6 +3,37 @@
 import numpy as np
 
 
+def quantile_scale(image, lower_pct=0.05, upper_pct=0.98,
+                   lower_th=0.0, upper_th=1000.0):
+    """Scales image intensities using quantiles
+
+    The intensities smaller than or equal to the lower percentage quantile
+    ``lower_pct`` will be set to the lower threshold ``lower_th`` and the
+    intensities greater than or equal to the upper percentage quantile
+    ``upper_pct`` will be set to the upper threshold ``upper_th``. The
+    intensities in between will be scaled linearly.
+
+    Args:
+        image (numpy.ndarray): The image to scale.
+        lower_pct (float, optional): The lower percentage.
+        uppder_pct (float, optional): The upper percentage.
+        lower_th (float, optional): The lower threshold.
+        upper_th (float, optional): The upper threshold.
+
+    Returns:
+        numpy.ndarray: The scaled image.
+
+    """
+    lower_val = np.quantile(image, lower_pct)
+    upper_val = np.quantile(image, upper_pct)
+    slope = (upper_th - lower_th) / (upper_val - lower_val)
+    intercept = lower_th - slope * lower_val
+    scaled = slope * image + intercept
+    scaled[scaled>upper_th] = upper_th
+    scaled[scaled<lower_th] = lower_th
+    return scaled
+
+
 def calc_random_intensity_transform(klim=(10.0, 20.0), blim=(-1.0, 1.0),
                                     num_sigmoid=5):
     """Calculates a random intensity transform.

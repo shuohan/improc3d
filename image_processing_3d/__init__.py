@@ -4,4 +4,10 @@ from .resizing import padcrop3d
 from .rotation import rotate3d
 from .scaling import scale3d
 from .translation import translate3d_int
-from .sigmoid_intensity import calc_random_intensity_transform
+from .intensity import calc_random_intensity_transform, quantile_scale
+from .reslicing import convert_LPIm_to_RAIm, convert_LPIm_to_RSAm
+from .reslicing import convert_LPIm_to_ASRm
+from .reslicing import reslice3d, reslice3d_coarse, calc_transformed_shape
+from .reslicing import transform_to_axial
+from .reslicing import transform_to_coronal
+from .reslicing import transform_to_sagittal
