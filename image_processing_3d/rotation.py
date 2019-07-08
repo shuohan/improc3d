@@ -5,7 +5,6 @@ from scipy.ndimage.interpolation import map_coordinates
 
 from .utils import calc_image_coords
 from .utils import calc_transformation_around_point
-from .utils import convert_points_to_homogeneous
 from .utils import convert_points_from_homogeneous
 
 
@@ -41,8 +40,6 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     inverse_transform = calc_transformation_around_point(inverse_rot, point)
 
     target_coords = calc_image_coords(image.shape[-3:])
-    target_coords = convert_points_to_homogeneous(target_coords)
-
     source_coords = inverse_transform @ target_coords
     source_coords = convert_points_from_homogeneous(source_coords)
 

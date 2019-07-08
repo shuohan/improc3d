@@ -93,18 +93,35 @@ def convert_grid_to_coords(grid):
     return coords
 
 
-def calc_image_coords(shape):
+def calc_image_coords(shape, homogeneous=True):
     """Calculates the coordinates of all image voxels.
 
     Args:
-        shape (tuple): The 3-element :py:class:`int` spatial shape of the image.
+        shape (tuple or numpy.ndarray): The 3-element :py:class:`int` spatial
+            shape of the image, or 3 x 2 array whose first column is the
+            coordinate starts and the second column is the stops (the largest
+            coordinates + 1).
+        homogeneous (bool, optional): Convert the coordinates into the
+            homogeneous coordinate if ``True``.
 
     Returns:
         numpy.ndarray: The num_dims x num_pixels coordinate vectors.
 
+    Raises:
+        RuntimeError: Invalid input ``shape``.
+
     """
-    grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
-    coords = convert_grid_to_coords(grid)
+    shape = np.array(shape)
+    if len(shape.shape) == 1:
+        g = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
+    elif len(shape.shape) == 2 and shape.shape[1] == 2:
+        g = np.meshgrid(*[np.arange(a, b) for (a, b) in shape], indexing='ij')
+    else:
+        raise RuntimeError('Invalid shape %s' % shape.__repr__())
+
+    coords = convert_grid_to_coords(g)
+    if homogeneous == True:
+        coords = convert_points_to_homogeneous(coords)
     return coords
 
 

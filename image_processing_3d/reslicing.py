@@ -36,7 +36,8 @@ following can be used:
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import convert_grid_to_coords, convert_points_to_homogeneous
+from .utils import convert_grid_to_coords, calc_image_coords
+from .utils import convert_points_to_homogeneous
 from .utils import convert_translation_to_homogeneous
 
 
@@ -114,15 +115,11 @@ def reslice(image, affine, order=1):
 
     """
     target_range = _calc_target_coords_range(image.shape, affine)
-    grid = np.meshgrid(*[np.arange(start, stop + 1)
-                         for (start, stop) in target_range], indexing='ij')
-    target_coords = convert_grid_to_coords(grid)
-    target_coords = convert_points_to_homogeneous(target_coords)
-
+    target_coords = calc_image_coords(target_range)
     affine_t2s = np.linalg.inv(affine)
     source_coords = affine_t2s @ target_coords
     result = map_coordinates(image, source_coords[:3, :], order=order)
-    result = np.reshape(result, grid[0].shape)
+    result = np.reshape(result, calc_transformed_shape(image.shape, affine))
     return result
 
 
@@ -164,20 +161,20 @@ def _calc_target_coords_range(source_shape, affine, round=True):
 
     Returns:
         numpy.ndarray: 3x2 matrix of the target coordinate ranges for the 3
-            axes. The first column is the lower bound and the second column is
-            the upper bound.
+            axes. The first column is the range starts and the second column is
+            the range stops (the largest coordinates + 1).
 
     """
     grid = np.meshgrid(*[(0, dim-1) for dim in source_shape])
     coords = convert_grid_to_coords(grid)
     coords = convert_points_to_homogeneous(coords)
     coords = (affine @ coords)[:3]
-    min_coords = np.min(coords, axis=1)[..., None]
-    max_coords = np.max(coords, axis=1)[..., None]
+    starts = np.min(coords, axis=1)[..., None]
+    stops = np.max(coords, axis=1)[..., None] + 1
     if round:
-        min_coords = np.floor(min_coords)
-        max_coords = np.ceil(max_coords)
-    return np.hstack((min_coords, max_coords))
+        starts = np.floor(starts)
+        stops = np.ceil(stops)
+    return np.hstack((starts, stops))
 
 
 def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
@@ -258,5 +255,5 @@ def calc_transformed_shape(image_shape, affine):
 
     """
     target_range = _calc_target_coords_range(image_shape, affine, round=True)
-    target_shape = (target_range[:, 1] - target_range[:, 0] + 1).astype(int)
+    target_shape = (target_range[:, 1] - target_range[:, 0]).astype(int)
     return tuple(target_shape)
