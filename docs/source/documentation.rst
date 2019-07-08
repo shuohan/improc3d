@@ -1,3 +1,5 @@
+.. include:: text_colors.rst
+
 Documentation
 =============
 
@@ -19,6 +21,21 @@ Transform
 .. autofunction:: translate3d_int
 .. autofunction:: calc_random_deformation3d
 .. autofunction:: calc_random_intensity_transform
+
+Reslice
+-------
+.. automodule:: image_processing_3d.reslicing
+.. automodule:: image_processing_3d
+   :noindex: 
+.. autofunction:: reslice
+.. autofunction:: reslice_coarse
+.. autofunction:: transform_to_axial
+.. autofunction:: transform_to_coronal
+.. autofunction:: transform_to_sagittal
+.. autofunction:: calc_transformed_shape
+.. autofunction:: convert_LPIm_to_RAIm
+.. autofunction:: convert_LPIm_to_RSAm
+.. autofunction:: convert_LPIm_to_ASRm
 
 Utilities
 -----------------------
