@@ -21,7 +21,10 @@ print(affine)
 # print(affine)
 # print('-' * 80)
 
-result = reslice(image, affine)
+# result = reslice(image, affine)
+result = reslice(image, np.eye(4))
+print(image.shape)
+print(result.shape)
 
 # axial = transform_to_axial(image, affine)
 # coronal = transform_to_coronal(image, affine)

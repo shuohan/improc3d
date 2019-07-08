@@ -113,15 +113,13 @@ def reslice(image, affine, order=1):
         numpy.ndarray: The transformed image.
 
     """
-    print(affine)
     target_range = _calc_target_coords_range(image.shape, affine)
-    grid = np.meshgrid(*[np.arange(start, stop)
-                         for (start, stop) in target_range], indexing='xy')
+    grid = np.meshgrid(*[np.arange(start, stop + 1)
+                         for (start, stop) in target_range], indexing='ij')
     target_coords = convert_grid_to_coords(grid)
     target_coords = convert_points_to_homogeneous(target_coords)
 
     affine_t2s = np.linalg.inv(affine)
-    print(affine_t2s)
     source_coords = affine_t2s @ target_coords
     result = map_coordinates(image, source_coords[:3, :], order=order)
     result = np.reshape(result, grid[0].shape)
@@ -156,12 +154,13 @@ def reslice_coarse(image, affine):
     return result
 
 
-def _calc_target_coords_range(source_shape, affine):
+def _calc_target_coords_range(source_shape, affine, round=True):
     """Calculates the range of the target coordinates.
 
     Args:
         source_shape (tuple): 3 :class:`int` spatial shape of the image.
         affine (numpy.ndarray): 4x4 affine matrix.
+        round (bool, optional): Floor the min and ceil the max if ``True``
 
     Returns:
         numpy.ndarray: 3x2 matrix of the target coordinate ranges for the 3
@@ -175,6 +174,9 @@ def _calc_target_coords_range(source_shape, affine):
     coords = (affine @ coords)[:3]
     min_coords = np.min(coords, axis=1)[..., None]
     max_coords = np.max(coords, axis=1)[..., None]
+    if round:
+        min_coords = np.floor(min_coords)
+        max_coords = np.ceil(max_coords)
     return np.hstack((min_coords, max_coords))
 
 
