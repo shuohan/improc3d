@@ -25,7 +25,7 @@ shape = calc_transformed_shape(image.shape, affine)
 assert np.array_equal(shape, LPIm1.shape)
 
 LPIm2 = reslice3d(image, affine, target_shape=(100, 100, 100))
-LPIm3 = reslice3d(image, affine, target_shape=(128, 96, 96), pivot_point=pivot)
+LPIm3 = reslice3d(image, affine, target_shape=(128, 96, 96), pivot=pivot)
 
 axial = transform_to_axial(image, affine)
 coronal = transform_to_coronal(image, affine)

@@ -101,7 +101,7 @@ def convert_LPIm_to_ASRm(LPIm_affine):
     return affine
 
 
-def reslice3d(image, affine, order=1, target_shape=None, pivot_point=None):
+def reslice3d(image, affine, order=1, target_shape=None, pivot=None):
     """Transforms a 3D image using an affine matrix with interpolation.
 
     Args:
@@ -112,11 +112,11 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot_point=None):
         target_shape (tuple, optional): 3 :class:`int` spatial shape of the
             transformed image. If ``None``, use the transformed corners from
             the source image to calculate the targe ranage; otherwise, the
-            target shape is symmetric around the transformed ``pivot_point``
+            target shape is symmetric around the transformed ``pivot``
             from the source image.
-        pivot_point (tuple, optional): :class:`int` 3D point for calculating
-            the target range with ``target_shape``. If ``None``, use the center
-            of the source image.
+        pivot (tuple, optional): :class:`int` 3D point for calculating the
+            target range with ``target_shape``. If ``None``, use the center of
+            the source image.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -126,9 +126,8 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot_point=None):
         target_range = _calc_target_range(image.shape, affine)
         target_shape = _calc_target_shape(target_range)
     else:
-        if pivot_point is None:
-            pivot_point = (np.array(image.shape[-3:]) - 1) / 2.0
-        target_range = _calc_target_range_p(target_shape, pivot_point, affine)
+        pivot = _calc_image_center(image.shape) if pivot is None else pivot
+        target_range = _calc_target_range_p(target_shape, pivot, affine)
     target_coords = calc_image_coords(target_range)
     affine_t2s = np.linalg.inv(affine)
     source_coords = affine_t2s @ target_coords
@@ -164,6 +163,10 @@ def reslice3d_coarse(image, affine):
     print('---')
     return result
 
+
+def _calc_image_center(image_shape):
+    """Returns the center of the image."""
+    return (np.array(image_shape[-3:]) - 1) / 2.0
 
 def _calc_target_shape(target_range):
     """Returns the shape of the target image."""
