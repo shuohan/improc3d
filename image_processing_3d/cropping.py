@@ -131,7 +131,7 @@ def calc_bbox3d(mask):
     starts = [[s.start for s in bbox] for bbox in bboxes]
     stops = [[s.stop for s in bbox] for bbox in bboxes]
     starts = np.min(starts, axis=0)
-    stops = np.min(stops, axis=0)
+    stops = np.max(stops, axis=0)
     bbox = [slice(start, stop, None) for start, stop in zip(starts, stops)]
     return tuple(bbox)
 
