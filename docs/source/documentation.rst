@@ -37,6 +37,11 @@ Transform
 .. autofunction:: calc_random_deformation3d
 .. autofunction:: calc_random_intensity_transform
 
+Intensity
+---------
+.. autofunction:: quantile_scale
+.. autofunction:: calc_random_intensity_transform
+
 Utilities
 -----------------------
 .. automodule:: image_processing_3d.utils
