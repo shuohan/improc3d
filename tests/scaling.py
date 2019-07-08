@@ -35,27 +35,20 @@ if args.duplicated_channels > 0:
 if args.point is not None:
     args.point = np.array(args.point)
 scaled = scale3d(image, args.x_scale, args.y_scale, args.z_scale, args.point)
+print(scaled.shape)
 
-if args.duplicated_channels == 0:
-    image = image[None, ...]
-    scaled = scaled[None, ...]
+if args.duplicated_channels > 0:
+    image = image[0, ...]
+    scaled = scaled[0, ...]
 
-for im, r in zip(image, scaled):
-
-    shape = im.shape
-    slice_indices = np.array(shape) // 2
-    plt.figure()
-    plt.subplot(2, 3, 1)
-    plt.imshow(im[slice_indices[0], :, :].T)
-    plt.subplot(2, 3, 2)
-    plt.imshow(im[:, slice_indices[1], :].T)
-    plt.subplot(2, 3, 3)
-    plt.imshow(im[:, :, slice_indices[2]].T)
-    plt.subplot(2, 3, 4)
-    plt.imshow(r[slice_indices[0], :, :].T)
-    plt.subplot(2, 3, 5)
-    plt.imshow(r[:, slice_indices[1], :].T)
-    plt.subplot(2, 3, 6)
-    plt.imshow(r[:, :, slice_indices[2]].T)
-
+images = (image, scaled)
+plt.figure()
+for i, im in enumerate(images):
+    im = np.transpose(im, axes=[1, 0, 2])
+    plt.subplot(len(images), 3, 3 * i + 1)
+    plt.imshow(im[:, :, im.shape[2]//2], cmap='gray')
+    plt.subplot(len(images), 3, 3 * i + 2)
+    plt.imshow(im[:, im.shape[2]//2, :], cmap='gray')
+    plt.subplot(len(images), 3, 3 * i + 3)
+    plt.imshow(im[im.shape[2]//2, :, :], cmap='gray')
 plt.show()

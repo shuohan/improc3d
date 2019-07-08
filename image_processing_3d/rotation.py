@@ -3,9 +3,8 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import calc_image_coords
-from .utils import calc_transformation_around_point
-from .utils import convert_points_from_homogeneous
+from .reslicing import reslice
+from .utils import convert_translation_to_homogeneous
 
 
 def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
@@ -28,30 +27,23 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
             :func:`scipy.ndimage.interpolation.map_coordinates`.
 
     """
-    if point is None:
-        point = np.array(image.shape[-3:]) / 2
+    # if point is None:
+    #     point = np.array(image.shape[-3:]) / 2
+    # translation = convert_translation_to_homogeneous(-np.array(point))
     
     rotation_x = _calc_rotation_x(x_angle / 180 * np.pi)
     rotation_y = _calc_rotation_y(y_angle / 180 * np.pi)
     rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rotation = rotation_z @ rotation_y @ rotation_x
 
-    inverse_rot = np.linalg.inv(rotation)
-    inverse_transform = calc_transformation_around_point(inverse_rot, point)
-
-    target_coords = calc_image_coords(image.shape[-3:])
-    source_coords = inverse_transform @ target_coords
-    source_coords = convert_points_from_homogeneous(source_coords)
-
-    if len(image.shape) == 4:
-        interpolation = [map_coordinates(im, source_coords, order=order)
-                         for im in image]
-        interpolation = np.vstack(interpolation)
-    else:
-        interpolation = map_coordinates(image, source_coords, order=order)
-    rotated_image = np.reshape(interpolation, image.shape)
-
-    return rotated_image 
+    return reslice(image, rotation)
+    # if len(image.shape) == 4:
+    #     interpolation = [map_coordinates(im, source_coords, order=order)
+    #                      for im in image]
+    #     interpolation = np.vstack(interpolation)
+    # else:
+    #     interpolation = map_coordinates(image, source_coords, order=order)
+    # rotated_image = np.reshape(interpolation, image.shape)
 
 
 def _calc_rotation_x(angle):
@@ -64,9 +56,10 @@ def _calc_rotation_x(angle):
         numpy.ndarray: The 3x3 rotation matrix.
 
     """
-    rotation = np.array([[1, 0, 0],
-                         [0, np.cos(angle), -np.sin(angle)],
-                         [0, np.sin(angle), np.cos(angle)]])
+    rotation = np.array([[1, 0, 0, 0],
+                         [0, np.cos(angle), -np.sin(angle), 0],
+                         [0, np.sin(angle), np.cos(angle), 0],
+                         [0, 0, 0, 1]])
     return rotation
 
 
@@ -80,9 +73,10 @@ def _calc_rotation_y(angle):
         numpy.ndarray: The 3x3 rotation matrix.
 
     """
-    rotation = np.array([[np.cos(angle), 0, np.sin(angle)],
-                         [0, 1, 0],
-                         [-np.sin(angle), 0, np.cos(angle)]])
+    rotation = np.array([[np.cos(angle), 0, np.sin(angle), 0],
+                         [0, 1, 0, 0],
+                         [-np.sin(angle), 0, np.cos(angle), 0],
+                         [0, 0, 0, 1]])
     return rotation
 
 
@@ -96,7 +90,8 @@ def _calc_rotation_z(angle):
         numpy.ndarray: The 3x3 rotation matrix.
 
     """
-    rotation = np.array([[np.cos(angle), -np.sin(angle), 0],
-                         [np.sin(angle), np.cos(angle), 0],
-                         [0, 0, 1]])
+    rotation = np.array([[np.cos(angle), -np.sin(angle), 0, 0],
+                         [np.sin(angle), np.cos(angle), 0, 0],
+                         [0, 0, 1, 0],
+                         [0, 0, 0, 1]])
     return rotation

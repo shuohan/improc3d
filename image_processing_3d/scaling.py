@@ -3,9 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .utils import calc_image_coords
-from .utils import calc_transformation_around_point
-from .utils import convert_points_from_homogeneous
+from .reslicing import reslice
 
 
 def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
@@ -30,24 +28,11 @@ def scale3d(image, x_scale, y_scale, z_scale, point=None, order=1):
         numpy.ndarray: The 3D or 4D scaled image.
 
     """
-    if point is None:
-        point = np.array(image.shape[-3:]) / 2
-    
-    inverse_scaling = np.array([[1/x_scale, 0, 0],
-                                [0, 1/y_scale, 0],
-                                [0, 0, 1/z_scale]])
-    inverse_transform = calc_transformation_around_point(inverse_scaling, point)
+    # if point is None:
+    #     point = np.array(image.shape[-3:]) / 2
 
-    target_coords = calc_image_coords(image.shape[-3:])
-    source_coords = inverse_transform @ target_coords
-    source_coords = convert_points_from_homogeneous(source_coords)
-
-    if len(image.shape) == 4:
-        interpolation = [map_coordinates(im, source_coords, order=order)
-                         for im in image]
-        interpolation = np.vstack(interpolation)
-    else:
-        interpolation = map_coordinates(image, source_coords, order=order)
-    scaled_image = np.reshape(interpolation, image.shape)
-
-    return scaled_image 
+    scaling = np.array([[x_scale, 0, 0, 0],
+                        [0, y_scale, 0, 0],
+                        [0, 0, z_scale, 0],
+                        [0, 0, 0, 1]])
+    return reslice(image, scaling)
