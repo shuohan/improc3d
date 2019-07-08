@@ -123,18 +123,12 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot_point=None):
 
     """
     if target_shape is None:
-        target_range = _calc_target_coords_range(image.shape, affine)
-        target_shape = (target_range[:, 1] - target_range[:, 0]).astype(int)
+        target_range = _calc_target_range(image.shape, affine)
+        target_shape = _calc_target_shape(target_range)
     else:
-        target_shape_r = np.reshape(target_shape, (3, 1))
         if pivot_point is None:
             pivot_point = (np.array(image.shape[-3:]) - 1) / 2.0
-        pivot_point = np.reshape(pivot_point, (3, 1))
-        pivot_point = convert_points_to_homogeneous(pivot_point)
-        t_pivot = (affine @ pivot_point)[:3, :]
-        starts = t_pivot - target_shape_r / 2.0
-        stops = starts + target_shape_r
-        target_range = np.hstack((starts, stops))
+        target_range = _calc_target_range_p(target_shape, pivot_point, affine)
     target_coords = calc_image_coords(target_range)
     affine_t2s = np.linalg.inv(affine)
     source_coords = affine_t2s @ target_coords
@@ -171,7 +165,12 @@ def reslice3d_coarse(image, affine):
     return result
 
 
-def _calc_target_coords_range(source_shape, affine, round=True):
+def _calc_target_shape(target_range):
+    """Returns the shape of the target image."""
+    return tuple((target_range[:, 1] - target_range[:, 0]).astype(int))
+
+
+def _calc_target_range(source_shape, affine, round=True):
     """Calculates the range of the target coordinates.
 
     Args:
@@ -194,6 +193,30 @@ def _calc_target_coords_range(source_shape, affine, round=True):
     if round:
         starts = np.floor(starts)
         stops = np.ceil(stops)
+    return np.hstack((starts, stops))
+
+
+def _calc_target_range_p(target_shape, pivot, affine):
+    """Calculates range of the target coordinates from pivot point and shape
+
+    Args:
+        target_shape (tuple): 3 :class:`int` spatial shape of the target image.
+        pivot (tuple): 3 :class:`float` the center point in the source image.
+            See :func:`reslice3e`.
+        affine (numpy.ndarray): 4x4 affine matrix.
+
+    Returns:
+        numpy.ndarray: 3x2 matrix of the target coordinate ranges for the 3
+            axes. The first column is the range starts and the second column is
+            the range stops (the largest coordinates + 1).
+
+    """
+    target_shape = np.reshape(target_shape, (3, 1))
+    pivot = np.reshape(pivot, (3, 1))
+    pivot = convert_points_to_homogeneous(pivot)
+    target_pivot = (affine @ pivot)[:3, :]
+    starts = target_pivot - target_shape / 2.0
+    stops = starts + target_shape
     return np.hstack((starts, stops))
 
 
@@ -274,6 +297,6 @@ def calc_transformed_shape(image_shape, affine):
         tuple: 3 :class:`int` spatial shape of the transformed image.
 
     """
-    target_range = _calc_target_coords_range(image_shape, affine, round=True)
-    target_shape = (target_range[:, 1] - target_range[:, 0]).astype(int)
-    return tuple(target_shape)
+    target_range = _calc_target_range(image_shape, affine, round=True)
+    target_shape = _calc_target_shape(target_range)
+    return target_shape
