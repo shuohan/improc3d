@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.reslicing import reslice
+from image_processing_3d.reslicing import reslice3d
 from image_processing_3d.reslicing import transform_to_axial
 from image_processing_3d.reslicing import transform_to_coronal
 from image_processing_3d.reslicing import transform_to_sagittal
@@ -19,7 +19,7 @@ print(image.shape)
 print(affine)
 print('-' * 80)
 
-# image_LPIm = reslice(image, affine)
+# image_LPIm = reslice3d(image, affine)
 # axial = transform_to_axial(image_LPIm, np.eye(4), coarse=False)
 # coronal = transform_to_coronal(image_LPIm, np.eye(4), coarse=False)
 # sagittal = transform_to_sagittal(image_LPIm, np.eye(4), coarse=False)

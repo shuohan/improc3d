@@ -3,11 +3,11 @@
 """Functions to reslice a 3D image.
 
 The package provides two types of reslicing. The first one uses interpolation
-transform the image. See :func:`reslice`. The second one permutes and/or
+transform the image. See :func:`reslice3d`. The second one permutes and/or
 flips the axes of the image to perform the affine, assuming the affine matrix is
 close to a permutation matrix with flipping (only a single entry of each column
 and row is close to 1 or -1 while others are approximately 0). See
-:func:`reslice_coarse`.
+:func:`reslice3d_coarse`.
 
 NOTE:
     This package define the :red:`axial` coordinate as the :red:`RAI minus`
@@ -26,7 +26,7 @@ loading a NIfTI image.
 Since the coarse reslicing is much faster than using interpolation, the
 following can be used:
 
->>> image_LPIm = reslice(image, LPIm_affine) # transform the image into LPI-
+>>> image_LPIm = reslice3d(image, LPIm_affine) # transform the image into LPI-
 >>> image_axial = transform_to_axial(image_LPIm, np.eye(4), coarse=True)
 >>> image_coronal = transform_to_coronal(image_LPIm, np.eye(4), coarse=True)
 >>> image_sagittal = transform_to_sagittal(image_LPIm, np.eye(4), coarse=True)
@@ -101,7 +101,7 @@ def convert_LPIm_to_ASRm(LPIm_affine):
     return affine
 
 
-def reslice(image, affine, order=1, target_shape=None, pivot_point=None):
+def reslice3d(image, affine, order=1, target_shape=None, pivot_point=None):
     """Transforms a 3D image using an affine matrix with interpolation.
 
     Args:
@@ -143,14 +143,14 @@ def reslice(image, affine, order=1, target_shape=None, pivot_point=None):
     return result
 
 
-def reslice_coarse(image, affine):
+def reslice3d_coarse(image, affine):
     """Transforms a 3D image using affine matrix with flipping and permutation.
 
     Assuming a single entry of each column and row of the affine matrix is
     dominant (i.e. close to a permutation matrix with reflection), this funciton
     flips and permutes the axes of the input image to roughly transform the
-    image into the target coordinate. It is faster than :func:`reslice` since it
-    does not do interpolation.
+    image into the target coordinate. It is faster than :func:`reslice3d` since
+    it does not do interpolation.
 
     Args:
         image (numpy.ndarray): The image to transform.
@@ -205,8 +205,8 @@ def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
         LPIm_affine (numpy.ndarray): 4x4 affine matrix.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
-        coarse (bool, optional): Use :func:`reslice_coarse` if ``True``.
-            Use :func:`reslice` otherwise.
+        coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
+            Use :func:`reslice3d` otherwise.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -214,9 +214,9 @@ def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_RAIm(LPIm_affine)
     if coarse:
-        return reslice_coarse(image, affine)
+        return reslice3d_coarse(image, affine)
     else:
-        return reslice(image, affine, order=order)
+        return reslice3d(image, affine, order=order)
 
 
 def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
@@ -227,8 +227,8 @@ def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
         LPIm_affine (numpy.ndarray): 4x4 affine matrix.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
-        coarse (bool, optional): Use :func:`reslice_coarse` if ``True``.
-            Use :func:`reslice` otherwise.
+        coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
+            Use :func:`reslice3d` otherwise.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -236,9 +236,9 @@ def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_RSAm(LPIm_affine)
     if coarse:
-        return reslice_coarse(image, affine)
+        return reslice3d_coarse(image, affine)
     else:
-        return reslice(image, affine, order=order)
+        return reslice3d(image, affine, order=order)
 
 
 def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
@@ -249,8 +249,8 @@ def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
         LPIm_affine (numpy.ndarray): 4x4 affine matrix.
         order (int, optional): The interpolation order. See
             :func:`scipy.ndimage.interpolation.map_coordinates`.
-        coarse (bool, optional): Use :func:`reslice_coarse` if ``True``.
-            Use :func:`reslice` otherwise.
+        coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
+            Use :func:`reslice3d` otherwise.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -258,9 +258,9 @@ def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_ASRm(LPIm_affine)
     if coarse:
-        return reslice_coarse(image, affine)
+        return reslice3d_coarse(image, affine)
     else:
-        return reslice(image, affine, order=order)
+        return reslice3d(image, affine, order=order)
 
 
 def calc_transformed_shape(image_shape, affine):

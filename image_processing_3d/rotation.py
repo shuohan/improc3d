@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .reslicing import reslice
+from .reslicing import reslice3d
 from .utils import convert_translation_to_homogeneous
 
 
@@ -36,7 +36,7 @@ def rotate3d(image, x_angle, y_angle, z_angle, point=None, order=1):
     rotation_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rotation = rotation_z @ rotation_y @ rotation_x
 
-    return reslice(image, rotation)
+    return reslice3d(image, rotation)
     # if len(image.shape) == 4:
     #     interpolation = [map_coordinates(im, source_coords, order=order)
     #                      for im in image]
