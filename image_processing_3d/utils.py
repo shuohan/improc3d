@@ -93,18 +93,17 @@ def convert_grid_to_coords(grid):
     return coords
 
 
-def calc_image_coords(shape, indexing='ij'):
+def calc_image_coords(shape):
     """Calculates the coordinates of all image voxels.
 
     Args:
         shape (tuple): The 3-element :py:class:`int` spatial shape of the image.
-        indexing (str, optional): 'ij' or 'xy'. See :func:`numpy.meshgrid`.
 
     Returns:
         numpy.ndarray: The num_dims x num_pixels coordinate vectors.
 
     """
-    grid = np.meshgrid(*[np.arange(s) for s in shape], indexing=indexing)
+    grid = np.meshgrid(*[np.arange(s) for s in shape], indexing='ij')
     coords = convert_grid_to_coords(grid)
     return coords
 

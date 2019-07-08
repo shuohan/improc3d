@@ -180,11 +180,6 @@ def _calc_target_coords_range(source_shape, affine, round=True):
     return np.hstack((min_coords, max_coords))
 
 
-def _calc_target_shape(target_range):
-    """Returns the shape of the target image"""
-    return np.ceil(target_range[:, 1]-target_range[:, 0]+1).astype(int)
-
-
 def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
     """Transforms the 3D image into the axial view.
 
@@ -262,6 +257,6 @@ def calc_transformed_shape(image_shape, affine):
         tuple: 3 :class:`int` spatial shape of the transformed image.
 
     """
-    target_range = _calc_target_coords_range(image_shape, affine)
-    target_shape = _calc_target_shape(target_range)
-    return target_shape
+    target_range = _calc_target_coords_range(image_shape, affine, round=True)
+    target_shape = (target_range[:, 1] - target_range[:, 0] + 1).astype(int)
+    return tuple(target_shape)
