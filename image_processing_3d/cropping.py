@@ -44,8 +44,8 @@ def crop3d(image, bbox):
     target_bbox = _calc_target_bounding_box(bbox, source_shape, target_shape)
     if len(image.shape) == 4:
         target_shape = [image.shape[0]] + target_shape
-        source_bbox = [...] + source_bbox
-        target_bbox = [...] + target_bbox
+        source_bbox = tuple([...] + list(source_bbox))
+        target_bbox = tuple([...] + list(target_bbox))
     cropped = np.zeros(target_shape, dtype=image.dtype)
     cropped[tuple(target_bbox)] = image[tuple(source_bbox)]
     return cropped, source_bbox, target_bbox
