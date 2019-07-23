@@ -150,7 +150,8 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
             ``bbox``.
 
     Returns:
-        tuple: The 3 :class:`int` resized bounding box.
+        tuple: The 3 :class:`int` resized bounding box. If multi-channel, the
+            output has 4 element and the first is ``...``.
 
     Raises:
         RuntimeError: ``bbox_shape`` is smaller than ``bbox`` if
