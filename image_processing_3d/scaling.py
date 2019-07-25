@@ -36,4 +36,4 @@ def scale3d(image, x_scale, y_scale, z_scale, pivot=None, order=1,
                         [0, 0, z_scale, 0],
                         [0, 0, 0, 1]])
     target_shape = image.shape if use_source_shape else None
-    return reslice3d(image, scaling, target_shape=target_shape, pivot=pivot)
+    return reslice3d(image, scaling, order, target_shape, pivot)

@@ -37,7 +37,7 @@ def rotate3d(image, x_angle, y_angle, z_angle, pivot=None, order=1,
     rot_z = _calc_rotation_z(z_angle / 180 * np.pi)
     rot = rot_z @ rot_y @ rot_x
     target_shape = image.shape if use_source_shape else None
-    return reslice3d(image, rot, target_shape=target_shape, pivot=pivot)
+    return reslice3d(image, rot, order, target_shape=target_shape, pivot=pivot)
 
 
 def _calc_rotation_x(angle):
