@@ -215,7 +215,7 @@ def _calc_target_range_p(target_shape, pivot, affine):
     pivot = np.reshape(pivot, (3, 1))
     pivot = convert_points_to_homogeneous(pivot)
     target_pivot = (affine @ pivot)[:3, :]
-    starts = target_pivot - target_shape / 2.0
+    starts = np.round(target_pivot - target_shape / 2.0)
     stops = starts + target_shape
     return np.hstack((starts, stops))
 
