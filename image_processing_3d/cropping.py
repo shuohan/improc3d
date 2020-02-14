@@ -4,7 +4,7 @@ import numpy as np
 from scipy.ndimage.measurements import find_objects
 
 
-def crop3d(image, bbox):
+def crop3d(image, bbox, pad='zero'):
     """Crops a 3D image using a bounding box.
 
     The size of bbox can be larger than the image. In that case, 0 will be put
@@ -46,7 +46,10 @@ def crop3d(image, bbox):
         target_shape = [image.shape[0]] + target_shape
         source_bbox = tuple([...] + list(source_bbox))
         target_bbox = tuple([...] + list(target_bbox))
-    cropped = np.zeros(target_shape, dtype=image.dtype)
+    if pad == 'zero':
+        cropped = np.zeros(target_shape, dtype=image.dtype)
+    elif pad == 'orig':
+        cropped = np.ones(target_shape, dtype=image.dtype) * image.flatten()[0]
     cropped[tuple(target_bbox)] = image[tuple(source_bbox)]
     return cropped, source_bbox, target_bbox
 
