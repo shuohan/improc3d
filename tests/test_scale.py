@@ -10,7 +10,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.scaling import scale3d
+from image_processing_3d.scale import scale3d
 
 
 parser = argparse.ArgumentParser(description='Test rotation')

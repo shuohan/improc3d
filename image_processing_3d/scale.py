@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .reslicing import reslice3d
+from .reslice import reslice3d
 
 
 def scale3d(image, x_scale, y_scale, z_scale, pivot=None, order=1,

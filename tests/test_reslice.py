@@ -5,18 +5,18 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.reslicing import reslice3d, calc_transformed_shape
-from image_processing_3d.reslicing import transform_to_axial
-from image_processing_3d.reslicing import transform_to_coronal
-from image_processing_3d.reslicing import transform_to_sagittal
-from image_processing_3d.cropping import calc_bbox3d
+from image_processing_3d.reslice import reslice3d, calc_transformed_shape
+from image_processing_3d.reslice import transform_to_axial
+from image_processing_3d.reslice import transform_to_coronal
+from image_processing_3d.reslice import transform_to_sagittal
+from image_processing_3d.crop import calc_bbox3d
 
 
-obj = nib.load('image1.nii.gz')
+obj = nib.load('image.nii.gz')
 image = obj.get_data()
 affine = obj.affine
 
-mask = nib.load('mask1.nii.gz').get_data()
+mask = nib.load('mask.nii.gz').get_data()
 bbox = calc_bbox3d(mask > 0)
 pivot = tuple([int((s.stop + s.start) / 2) for s in bbox])
 

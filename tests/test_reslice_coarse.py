@@ -5,13 +5,13 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.reslicing import reslice3d, reslice3d_coarse
-from image_processing_3d.reslicing import transform_to_axial
-from image_processing_3d.reslicing import transform_to_coronal
-from image_processing_3d.reslicing import transform_to_sagittal
+from image_processing_3d.reslice import reslice3d, reslice3d_coarse
+from image_processing_3d.reslice import transform_to_axial
+from image_processing_3d.reslice import transform_to_coronal
+from image_processing_3d.reslice import transform_to_sagittal
 
 
-obj = nib.load('image2.nii.gz')
+obj = nib.load('image1.nii.gz')
 image = obj.get_data()
 affine = obj.affine
 print(image.shape)

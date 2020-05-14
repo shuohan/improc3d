@@ -3,7 +3,7 @@
 import numpy as np
 from scipy.ndimage.interpolation import map_coordinates
 
-from .reslicing import reslice3d
+from .reslice import reslice3d
 from .utils import convert_translation_to_homogeneous
 
 

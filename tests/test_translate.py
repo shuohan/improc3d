@@ -4,25 +4,22 @@
 import sys
 sys.path.insert(0, '..')
 
-import os
 import argparse
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.rotation import rotate3d
+from image_processing_3d.translate import translate3d_int 
 
 
 parser = argparse.ArgumentParser(description='Test rotation')
 parser.add_argument('image', help='The 3D image to rotate')
-parser.add_argument('-x', '--x-angle', default=5, required=False, type=float,
-                    help='The rotation angle around x axis in degree')
-parser.add_argument('-y', '--y-angle', default=5, required=False, type=float,
-                    help='The rotation angle around y axis in degree')
-parser.add_argument('-z', '--z-angle', default=5, required=False, type=float,
-                    help='The rotation angle around z axis in degree')
-parser.add_argument('-p', '--point', default=None, required=False, nargs=3,
-                    type=float, help='The 3D image to rotate')
+parser.add_argument('-x', '--x-translation', default=5, required=False,
+                    type=float, help='The translation along x axis')
+parser.add_argument('-y', '--y-translation', default=5, required=False,
+                    type=float, help='The translation along y axis')
+parser.add_argument('-z', '--z-translation', default=5, required=False,
+                    type=float, help='The rotation angle along z axis')
 parser.add_argument('-d', '--duplicated-channels', type=int, default=0,
                     required=False, help='Number of repeats to duplicate the '
                                          'image to multi-channels')
@@ -32,15 +29,14 @@ image = nib.load(args.image).get_data()
 if args.duplicated_channels > 0:
     image = np.repeat(image[None, ...], args.duplicated_channels, 0)
 
-if args.point is not None:
-    args.point = np.array(args.point)
-rotated = rotate3d(image, args.x_angle, args.y_angle, args.z_angle, args.point)
+translated = translate3d_int(image, args.x_translation, args.y_translation,
+                             args.z_translation)
 
 if args.duplicated_channels == 0:
     image = image[None, ...]
-    rotated = rotated[None, ...]
+    translated = translated[None, ...]
 
-for im, r in zip(image, rotated):
+for im, r in zip(image, translated):
 
     shape = im.shape
     slice_indices = np.array(shape) // 2

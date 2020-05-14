@@ -10,8 +10,8 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.cropping import crop3d, calc_bbox3d, resize_bbox3d
-from image_processing_3d.cropping import uncrop3d
+from image_processing_3d.crop import crop3d, calc_bbox3d, resize_bbox3d
+from image_processing_3d.crop import uncrop3d
 
 
 parser = argparse.ArgumentParser(description='Test cropping')
