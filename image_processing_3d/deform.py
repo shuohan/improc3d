@@ -58,8 +58,7 @@ def calc_random_deformation3d(image_shape, sigma, scale):
         numpy.ndarray: One component of the 3D deformation filed along an axis.
 
     """
-    random_state = np.random.RandomState(None)
-    result = random_state.rand(*image_shape) * 2 - 1
+    result = np.random.rand(*image_shape) * 2 - 1
     result = gaussian_filter(result, sigma)
     result = result / np.max(result) * scale
     return result
