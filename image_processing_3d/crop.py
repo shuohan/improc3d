@@ -234,3 +234,71 @@ def padcrop3d(image, target_shape):
     resized_bbox = resize_bbox3d(bbox, target_shape, allow_smaller=True)
     result, source_bbox, target_bbox = crop3d(image, resized_bbox)
     return result, source_bbox, target_bbox
+
+
+def crop3d2(image, bbox, mode='constant', **kwargs):
+    """Crops a 3D image first with numpy.pad then crop.
+
+    Args:
+        image (numpy.ndarray): The 3D or 4D image to crop. If ``image`` is 4D,
+            the 0 dimension is assumed to be the channels and the same bounding
+            box will be applied to all the channels.
+        bbox (tuple[slice]): The length==3 bounding box specifying the cropping
+            range. The start and stop of each slice should not be ``None``.
+        mode (str): The padding mode. See :func:`numpy.pad` for more details.
+        kwargs (dict): The other parameters of :func:`numpy.pad`.
+
+    Returns
+    -------
+        cropped_image: numpy.ndarray
+            The 3D or 4D cropped image. If ``image`` is 4D, ``cropped_image`` is
+            also 4D and channel first.
+        pad_width: tuple[tuple[int]]
+            The paddings use to pad the input image.
+        cropping_bbox: tuple[slice]
+            The bounding box used to crop the padded image.
+
+    """
+    source_shape = image.shape[-len(bbox):]
+    left_pads = [max(0, 0 - b.start) for b in bbox]
+    right_pads = [max(0, b.stop - s) for s, b in zip(source_shape, bbox)]
+    pad_width = list(zip(left_pads, right_pads))
+    cropping_bbox = [slice(b.start + l, b.stop + l)
+                     for b, l, r in zip(bbox, left_pads, right_pads)]
+    if image.ndim == 4:
+        pad_width.insert(0, (0, 0))
+        cropping_bbox.insert(0, ...)
+    cropping_bbox = tuple(cropping_bbox)
+    pad_width = tuple(pad_width)
+    padded_image = np.pad(image, pad_width, mode=mode, **kwargs)
+    cropped_image = padded_image[cropping_bbox]
+    return cropped_image, pad_width, cropping_bbox
+
+
+def uncrop3d2(image, source_shape, pad_width, cropping_bbox):
+    """Reverses :func:`crop3d2` but pads zeros around the cropped region.
+
+    Note:
+        The ``pad_width`` and ``cropping_bbox`` should be the outputs of the
+        function :func:`crop3d2`.
+
+    Args:
+        image (numpy.ndarray): The 3D or 4D image to uncrop; channels first if
+            ``image`` is 4D.
+        source_shape (tuple[int]): The len==3 spatial shape of uncropped image.
+        pad_width (tuple[tuple[int]]): The paddings used to pad the input image.
+        cropping_bbox (tuple[slice]): The bbox used to crop the padded image.
+
+    Returns:
+        numpy.ndarray: The 3D or 4D uncropped image; channels first if 4D.
+
+    """
+    source_shape = list(source_shape)
+    if image.ndim == 4:
+        source_shape.insert(0, image.shape[0])
+    padded_shape = [ss + l + r for ss, (l, r) in zip(source_shape, pad_width)]
+    padded_image = np.zeros(padded_shape, dtype=image.dtype)
+    padded_image[cropping_bbox] = image
+    bbox = [slice(l, s - r) for (l, r), s in zip(pad_width, padded_image.shape)]
+    uncropped_image = padded_image[tuple(bbox)]
+    return uncropped_image
