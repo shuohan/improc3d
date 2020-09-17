@@ -204,11 +204,11 @@ def uncrop3d(image, source_shape, source_bbox, target_bbox):
     return uncropped
 
 
-def padcrop3d(image, target_shape):
+def padcrop3d(image, target_shape, output_bbox=True):
     """Pads or crops the 3D image to resize.
 
     This function pads zero to the image if ``target_shape`` exceeds ``image``
-    along an axis and crop it if ``target_shape`` is contained within the
+    along an axis and crops it if ``target_shape`` is contained within the
     ``image``.
 
     NOTE:
@@ -220,6 +220,7 @@ def padcrop3d(image, target_shape):
             first dimension is assumed to be channels.
         target_shape (tuple[int]): The length==3 spatial shape of the resized
             image.
+        output_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
 
     Returns
     -------
@@ -231,14 +232,16 @@ def padcrop3d(image, target_shape):
             The length==3 bounding box in the target image.
 
     """
-    if len(image.shape) == 3:
-        shape = image.shape
-    elif len(image.shape) == 4:
-        shape = image.shape[1:]
+    bbox = _calc_padcrop_bbox(image, target_shape)
+    return crop3d(image, bbox, output_bbox=output_bbox)
+
+
+def _calc_padcrop_bbox(image, target_shape):
+    """Calculates the bbox for :func:`padcrop3d`."""
+    shape = image.shape if len(image.shape) == 3 else image.shape[1:]
     bbox = [slice(0, s) for s in shape]
     resized_bbox = resize_bbox3d(bbox, target_shape, allow_smaller=True)
-    result, source_bbox, target_bbox = crop3d(image, resized_bbox)
-    return result, source_bbox, target_bbox
+    return resized_bbox
 
 
 def crop3d2(image, bbox, mode='constant', output_bbox=True, **kwargs):
