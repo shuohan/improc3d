@@ -171,8 +171,8 @@ def resize_bbox3d(bbox, bbox_shape, allow_smaller=True):
             raise RuntimeError('Target shape should be bigger than the '
                                'source shape')
         else:
-            left_padding = np.floor(diff / 2).astype(int)
-            right_padding = np.ceil(diff / 2).astype(int)
+            left_padding = diff // 2
+            right_padding = diff - left_padding
             target_bound = slice(source_bound.start - left_padding,
                                  source_bound.stop + right_padding)
         resized_bbox.append(target_bound)
@@ -315,3 +315,39 @@ def uncrop3d2(image, source_shape, pad_width, cropping_bbox):
     bbox = [slice(l, s - r) for (l, r), s in zip(pad_width, padded_image.shape)]
     uncropped_image = padded_image[tuple(bbox)]
     return uncropped_image
+
+
+
+def padcrop3d2(image, target_shape, mode='constant', output_bbox=True,
+               **kwargs):
+    """Pads the image with :func:`numpy.pad` then crops the 3D image to resize.
+
+    This function pads values to the image if ``target_shape`` exceeds ``image``
+    along an axis and crops it if ``target_shape`` is contained within the
+    ``image``.
+
+    NOTE:
+        Use :func:`uncrop3d2` with the returned ``pad_width`` and
+        ``cropping_bbox`` by this function to unresize.
+
+    Args:
+        image (numpy.ndarray): The 3D or 4D image to pad or crop; if 4D, the
+            first dimension is assumed to be channels.
+        target_shape (tuple[int]): The length==3 spatial shape of the resized
+            image.
+        mode (str): The padding mode. See :func:`numpy.pad` for more details.
+        output_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
+        kwargs (dict): The other parameters of :func:`numpy.pad`.
+
+    Returns
+    -------
+        result: numpy.ndarray
+            The 3D or 4D resized image.
+        pad_width: tuple[tuple[int]]
+            The paddings use to pad the input image.
+        cropping_bbox: tuple[slice]
+            The bounding box used to crop the padded image.
+
+    """
+    bbox = _calc_padcrop_bbox(image, target_shape)
+    return crop3d2(image, bbox, mode=mode, output_bbox=output_bbox, **kwargs)
