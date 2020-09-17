@@ -33,6 +33,12 @@ def test_crop():
         assert np.array_equal(cropped_mc[i], cropped)
         assert np.array_equal(uncropped_mc[i], uncropped)
 
+    cropped2 = crop3d2(image, bbox, output_bbox=False)
+    assert np.array_equal(cropped2, cropped)
+
+    cropped3 = crop3d2(image, bbox, output_bbox=False, constant_values=100)
+    assert cropped3[0, 0, 0] == 100
+
     print('Successful.')
 
 

@@ -4,7 +4,7 @@ import numpy as np
 from scipy.ndimage.measurements import find_objects
 
 
-def crop3d(image, bbox, pad='zero'):
+def crop3d(image, bbox, pad='zero', output_bbox=True):
     """Crops a 3D image using a bounding box.
 
     The size of bbox can be larger than the image. In that case, 0 will be put
@@ -25,6 +25,7 @@ def crop3d(image, bbox, pad='zero'):
             box will be applied to all the channels.
         bbox (tuple[slice]): The length==3 bounding box. The start and stop of
             each slice should NOT be ``None``.
+        output_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
 
     Returns
     -------
@@ -51,7 +52,11 @@ def crop3d(image, bbox, pad='zero'):
     elif pad == 'orig':
         cropped = np.ones(target_shape, dtype=image.dtype) * image.flatten()[0]
     cropped[tuple(target_bbox)] = image[tuple(source_bbox)]
-    return cropped, source_bbox, target_bbox
+
+    if output_bbox:
+        return cropped, source_bbox, target_bbox
+    else:
+        return cropped
 
 
 def _calc_source_bounding_box(bbox, source_shape):
@@ -236,7 +241,7 @@ def padcrop3d(image, target_shape):
     return result, source_bbox, target_bbox
 
 
-def crop3d2(image, bbox, mode='constant', **kwargs):
+def crop3d2(image, bbox, mode='constant', output_bbox=True, **kwargs):
     """Crops a 3D image first with numpy.pad then crop.
 
     Args:
@@ -246,6 +251,7 @@ def crop3d2(image, bbox, mode='constant', **kwargs):
         bbox (tuple[slice]): The length==3 bounding box specifying the cropping
             range. The start and stop of each slice should not be ``None``.
         mode (str): The padding mode. See :func:`numpy.pad` for more details.
+        output_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
         kwargs (dict): The other parameters of :func:`numpy.pad`.
 
     Returns
@@ -272,7 +278,11 @@ def crop3d2(image, bbox, mode='constant', **kwargs):
     pad_width = tuple(pad_width)
     padded_image = np.pad(image, pad_width, mode=mode, **kwargs)
     cropped_image = padded_image[cropping_bbox]
-    return cropped_image, pad_width, cropping_bbox
+
+    if output_bbox:
+        return cropped_image, pad_width, cropping_bbox
+    else:
+        return cropped_image
 
 
 def uncrop3d2(image, source_shape, pad_width, cropping_bbox):
