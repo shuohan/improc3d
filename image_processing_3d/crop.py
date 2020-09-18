@@ -27,13 +27,13 @@ def crop3d(image, bbox, pad='zero', return_bbox=True):
 
     Returns
     -------
-        cropped: numpy.ndarray
-            The 3D or 4D cropped image. If ``image`` is 4D, ``cropped`` is also
-            4D and channel first.
-        source_bbox: tuple
-            The 3 :class:`slice` bounding box in the source image.
-        target_bbox: tuple
-            The 3 :class:`slice` bounding box in the target image.
+    cropped: numpy.ndarray
+        The 3D or 4D cropped image. If ``image`` is 4D, ``cropped`` is also 4D
+        and channel first.
+    source_bbox: tuple
+        The 3 :class:`slice` bounding box in the source image.
+    target_bbox: tuple
+        The 3 :class:`slice` bounding box in the target image.
 
     """
     num_dims = len(bbox)
@@ -222,12 +222,12 @@ def padcrop3d(image, target_shape, return_bbox=True):
 
     Returns
     -------
-        result: numpy.ndarray
-            The 3D or 4D resized image.
-        source_bbox: tuple[slice]
-            The length==3 bounding box in the source image.
-        target_bbox: tuple[slice]
-            The length==3 bounding box in the target image.
+    result: numpy.ndarray
+        The 3D or 4D resized image.
+    source_bbox: tuple[slice]
+        The length==3 bounding box in the source image.
+    target_bbox: tuple[slice]
+        The length==3 bounding box in the target image.
 
     """
     bbox = _calc_padcrop_bbox(image, target_shape)
@@ -257,13 +257,13 @@ def crop3d2(image, bbox, mode='constant', return_bbox=True, **kwargs):
 
     Returns
     -------
-        cropped_image: numpy.ndarray
-            The 3D or 4D cropped image. If ``image`` is 4D, ``cropped_image`` is
-            also 4D and channel first.
-        pad_width: tuple[tuple[int]]
-            The paddings use to pad the input image.
-        cropping_bbox: tuple[slice]
-            The bounding box used to crop the padded image.
+    cropped_image: numpy.ndarray
+        The 3D or 4D cropped image. If ``image`` is 4D, ``cropped_image`` is
+        also 4D and channel first.
+    pad_width: tuple[tuple[int]]
+        The paddings use to pad the input image.
+    cropping_bbox: tuple[slice]
+        The bounding box used to crop the padded image.
 
     """
     source_shape = image.shape[-len(bbox):]
@@ -339,12 +339,12 @@ def padcrop3d2(image, target_shape, mode='constant', return_bbox=True,
 
     Returns
     -------
-        result: numpy.ndarray
-            The 3D or 4D resized image.
-        pad_width: tuple[tuple[int]]
-            The paddings use to pad the input image.
-        cropping_bbox: tuple[slice]
-            The bounding box used to crop the padded image.
+    result: numpy.ndarray
+        The 3D or 4D resized image.
+    pad_width: tuple[tuple[int]]
+        The paddings use to pad the input image.
+    cropping_bbox: tuple[slice]
+        The bounding box used to crop the padded image.
 
     """
     bbox = _calc_padcrop_bbox(image, target_shape)
