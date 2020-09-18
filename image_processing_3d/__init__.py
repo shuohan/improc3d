@@ -10,3 +10,4 @@ from .reslice import reslice3d, reslice3d_coarse, calc_transformed_shape
 from .reslice import transform_to_axial
 from .reslice import transform_to_coronal
 from .reslice import transform_to_sagittal
+from .permute import permute3d, Axis
