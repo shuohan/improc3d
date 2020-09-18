@@ -2,7 +2,7 @@ import numpy as np
 from scipy.ndimage.measurements import find_objects
 
 
-def crop3d(image, bbox, pad='zero', output_bbox=True):
+def crop3d(image, bbox, pad='zero', return_bbox=True):
     """Crops a 3D image using a bounding box.
 
     The size of bbox can be larger than the image. In that case, 0 will be put
@@ -23,7 +23,7 @@ def crop3d(image, bbox, pad='zero', output_bbox=True):
             box will be applied to all the channels.
         bbox (tuple[slice]): The length==3 bounding box. The start and stop of
             each slice should NOT be ``None``.
-        output_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
+        return_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
 
     Returns
     -------
@@ -51,7 +51,7 @@ def crop3d(image, bbox, pad='zero', output_bbox=True):
         cropped = np.ones(target_shape, dtype=image.dtype) * image.flatten()[0]
     cropped[tuple(target_bbox)] = image[tuple(source_bbox)]
 
-    if output_bbox:
+    if return_bbox:
         return cropped, source_bbox, target_bbox
     else:
         return cropped
@@ -202,7 +202,7 @@ def uncrop3d(image, source_shape, source_bbox, target_bbox):
     return uncropped
 
 
-def padcrop3d(image, target_shape, output_bbox=True):
+def padcrop3d(image, target_shape, return_bbox=True):
     """Pads or crops the 3D image to resize.
 
     This function pads zero to the image if ``target_shape`` exceeds ``image``
@@ -218,7 +218,7 @@ def padcrop3d(image, target_shape, output_bbox=True):
             first dimension is assumed to be channels.
         target_shape (tuple[int]): The length==3 spatial shape of the resized
             image.
-        output_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
+        return_bbox (bool): Output ``source_bbox`` and ``target_bbox`` if true.
 
     Returns
     -------
@@ -231,7 +231,7 @@ def padcrop3d(image, target_shape, output_bbox=True):
 
     """
     bbox = _calc_padcrop_bbox(image, target_shape)
-    return crop3d(image, bbox, output_bbox=output_bbox)
+    return crop3d(image, bbox, return_bbox=return_bbox)
 
 
 def _calc_padcrop_bbox(image, target_shape):
@@ -242,7 +242,7 @@ def _calc_padcrop_bbox(image, target_shape):
     return resized_bbox
 
 
-def crop3d2(image, bbox, mode='constant', output_bbox=True, **kwargs):
+def crop3d2(image, bbox, mode='constant', return_bbox=True, **kwargs):
     """Crops a 3D image first with numpy.pad then crop.
 
     Args:
@@ -252,7 +252,7 @@ def crop3d2(image, bbox, mode='constant', output_bbox=True, **kwargs):
         bbox (tuple[slice]): The length==3 bounding box specifying the cropping
             range. The start and stop of each slice should not be ``None``.
         mode (str): The padding mode. See :func:`numpy.pad` for more details.
-        output_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
+        return_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
         kwargs (dict): The other parameters of :func:`numpy.pad`.
 
     Returns
@@ -280,7 +280,7 @@ def crop3d2(image, bbox, mode='constant', output_bbox=True, **kwargs):
     padded_image = np.pad(image, pad_width, mode=mode, **kwargs)
     cropped_image = padded_image[cropping_bbox]
 
-    if output_bbox:
+    if return_bbox:
         return cropped_image, pad_width, cropping_bbox
     else:
         return cropped_image
@@ -316,7 +316,7 @@ def uncrop3d2(image, source_shape, pad_width, cropping_bbox):
 
 
 
-def padcrop3d2(image, target_shape, mode='constant', output_bbox=True,
+def padcrop3d2(image, target_shape, mode='constant', return_bbox=True,
                **kwargs):
     """Pads the image with :func:`numpy.pad` then crops the 3D image to resize.
 
@@ -334,7 +334,7 @@ def padcrop3d2(image, target_shape, mode='constant', output_bbox=True,
         target_shape (tuple[int]): The length==3 spatial shape of the resized
             image.
         mode (str): The padding mode. See :func:`numpy.pad` for more details.
-        output_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
+        return_bbox (bool): Output ``pad_width`` and ``cropping_bbox`` if true.
         kwargs (dict): The other parameters of :func:`numpy.pad`.
 
     Returns
@@ -348,4 +348,4 @@ def padcrop3d2(image, target_shape, mode='constant', output_bbox=True,
 
     """
     bbox = _calc_padcrop_bbox(image, target_shape)
-    return crop3d2(image, bbox, mode=mode, output_bbox=output_bbox, **kwargs)
+    return crop3d2(image, bbox, mode=mode, return_bbox=return_bbox, **kwargs)
