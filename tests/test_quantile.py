@@ -4,7 +4,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.intensity import quantile_scale
+from improc3d.intensity import quantile_scale
 
 
 image = nib.load('image.nii.gz').get_data()

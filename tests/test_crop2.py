@@ -5,7 +5,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.crop import crop3d2, uncrop3d2, padcrop3d2
+from improc3d.crop import crop3d2, uncrop3d2, padcrop3d2
 
 
 def test_crop():

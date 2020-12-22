@@ -8,11 +8,11 @@ scripts = glob('scripts/*')
 command = ['git', 'describe', '--tags']
 version = subprocess.check_output(command).decode().strip()
 
-setup(name='image-processing-3d',
+setup(name='improc3d',
       version=version,
       description='Useful functions to process 3D images',
       author='Shuo Han',
       author_email='shan50@jhu.edu',
       scripts=scripts,
       install_requires=['numpy', 'scipy'],
-      packages=['image_processing_3d'])
+      packages=['improc3d'])
