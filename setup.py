@@ -14,5 +14,6 @@ setup(name='improc3d',
       author='Shuo Han',
       author_email='shan50@jhu.edu',
       scripts=scripts,
+      license='MIT',
       install_requires=['numpy', 'scipy'],
       packages=['improc3d'])
