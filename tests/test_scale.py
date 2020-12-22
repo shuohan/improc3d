@@ -1,15 +1,12 @@
 #!/usr/bin/env python
 
-import sys
-sys.path.insert(0, '..')
-
 import os
 import argparse
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.scale import scale3d
+from improc3d.scale import scale3d
 
 
 parser = argparse.ArgumentParser(description='Test rotation')

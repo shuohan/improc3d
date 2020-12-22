@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy as np
-from image_processing_3d.permute import permute3d
+from improc3d.permute import permute3d
 
 
 def test_permute():

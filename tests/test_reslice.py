@@ -4,11 +4,11 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.reslice import reslice3d, calc_transformed_shape
-from image_processing_3d.reslice import transform_to_axial
-from image_processing_3d.reslice import transform_to_coronal
-from image_processing_3d.reslice import transform_to_sagittal
-from image_processing_3d.crop import calc_bbox3d
+from improc3d.reslice import reslice3d, calc_transformed_shape
+from improc3d.reslice import transform_to_axial
+from improc3d.reslice import transform_to_coronal
+from improc3d.reslice import transform_to_sagittal
+from improc3d.crop import calc_bbox3d
 
 
 obj = nib.load('image.nii.gz')

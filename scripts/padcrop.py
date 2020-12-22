@@ -4,7 +4,7 @@
 import argparse
 import os
 import nibabel as nib
-from image_processing_3d import crop3d, calc_bbox3d, resize_bbox3d, padcrop3d
+from improc3d import crop3d, calc_bbox3d, resize_bbox3d, padcrop3d
 
 desc = 'Pad or crop a 3D image to a target shape.'
 parser = argparse.ArgumentParser(description=desc)

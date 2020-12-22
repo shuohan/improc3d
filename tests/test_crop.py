@@ -1,16 +1,13 @@
 #!/usr/bin/env python
 
-import sys
-sys.path.insert(0, '..')
-
 import os
 import argparse
 import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.crop import crop3d, calc_bbox3d, resize_bbox3d
-from image_processing_3d.crop import uncrop3d
+from improc3d.crop import crop3d, calc_bbox3d, resize_bbox3d
+from improc3d.crop import uncrop3d
 
 
 parser = argparse.ArgumentParser(description='Test cropping')

@@ -4,7 +4,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.intensity import calc_random_intensity_transform
+from improc3d.intensity import calc_random_intensity_transform
 
 
 low = -0.5
