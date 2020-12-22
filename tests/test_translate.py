@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 import sys
 sys.path.insert(0, '..')
@@ -9,7 +8,7 @@ import numpy as np
 import nibabel as nib
 import matplotlib.pyplot as plt
 
-from image_processing_3d.translation import translate3d_int 
+from image_processing_3d.translate import translate3d_int 
 
 
 parser = argparse.ArgumentParser(description='Test rotation')

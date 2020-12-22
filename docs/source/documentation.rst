@@ -15,7 +15,7 @@ Resize
 
 Reslice
 -------
-.. automodule:: image_processing_3d.reslicing
+.. automodule:: image_processing_3d.reslice
 .. automodule:: image_processing_3d
    :noindex: 
 .. autofunction:: reslice3d
@@ -35,7 +35,6 @@ Transform
 .. autofunction:: scale3d
 .. autofunction:: translate3d_int
 .. autofunction:: calc_random_deformation3d
-.. autofunction:: calc_random_intensity_transform
 
 Intensity
 ---------

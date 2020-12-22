@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 """Functions to reslice a 3D image.
 
 The package provides two types of reslicing. The first one uses interpolation
