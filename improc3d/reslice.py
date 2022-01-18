@@ -135,7 +135,7 @@ def reslice3d(image, affine, order=1, target_shape=None, pivot=None):
     return np.reshape(result, target_shape)
 
 
-def reslice3d_coarse(image, affine):
+def reslice3d_coarse(image, affine, zooms=None):
     """Transforms a 3D image using affine matrix with flipping and permutation.
 
     Assuming a single entry of each column and row of the affine matrix is
@@ -147,11 +147,15 @@ def reslice3d_coarse(image, affine):
     Args:
         image (numpy.ndarray): The image to transform.
         affine (numpy.ndarray): 4x4 affine matrix to transform the image.
+        zooms (iterable[float]): The voxel sizes.
 
     Returns:
         numpy.ndarray: The transformed image.
 
     """
+    if zooms is not None:
+        inv_zooms = [1 / z for z in zooms] + [1]
+        affine = affine @ np.diag(inv_zooms)
     axes = np.argmax(np.abs(affine[:3, :3]), axis=1)
     result = np.transpose(image, axes=axes)
     axes = np.arange(3)[np.sum(affine[:3, :3], axis=1)<0]
@@ -218,7 +222,7 @@ def _calc_target_range_p(target_shape, pivot, affine):
     return np.hstack((starts, stops))
 
 
-def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
+def transform_to_axial(image, LPIm_affine, order=1, coarse=False, zooms=None):
     """Transforms the 3D image into the axial view.
 
     Args:
@@ -228,6 +232,7 @@ def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
             :func:`scipy.ndimage.interpolation.map_coordinates`.
         coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
             Use :func:`reslice3d` otherwise.
+        zooms (iterable[float]): The voxel sizes for :func:`reslice3d_coarse`.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -235,12 +240,12 @@ def transform_to_axial(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_RAIm(LPIm_affine)
     if coarse:
-        return reslice3d_coarse(image, affine)
+        return reslice3d_coarse(image, affine, zooms=zooms)
     else:
         return reslice3d(image, affine, order=order)
 
 
-def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
+def transform_to_coronal(image, LPIm_affine, order=1, coarse=False, zooms=None):
     """Transforms the 3D image into the coronal view.
 
     Args:
@@ -250,6 +255,7 @@ def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
             :func:`scipy.ndimage.interpolation.map_coordinates`.
         coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
             Use :func:`reslice3d` otherwise.
+        zooms (iterable[float]): The voxel sizes for :func:`reslice3d_coarse`.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -257,12 +263,12 @@ def transform_to_coronal(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_RSAm(LPIm_affine)
     if coarse:
-        return reslice3d_coarse(image, affine)
+        return reslice3d_coarse(image, affine, zooms=zooms)
     else:
         return reslice3d(image, affine, order=order)
 
 
-def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
+def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False, zooms=None):
     """Transforms the 3D image into the sagittal view.
 
     Args:
@@ -272,6 +278,7 @@ def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
             :func:`scipy.ndimage.interpolation.map_coordinates`.
         coarse (bool, optional): Use :func:`reslice3d_coarse` if ``True``.
             Use :func:`reslice3d` otherwise.
+        zooms (iterable[float]): The voxel sizes for :func:`reslice3d_coarse`.
 
     Returns:
         numpy.ndarray: The transformed image.
@@ -279,7 +286,7 @@ def transform_to_sagittal(image, LPIm_affine, order=1, coarse=False):
     """
     affine = convert_LPIm_to_ASRm(LPIm_affine)
     if coarse:
-        return reslice3d_coarse(image, affine)
+        return reslice3d_coarse(image, affine, zooms=zooms)
     else:
         return reslice3d(image, affine, order=order)
 
